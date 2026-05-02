@@ -467,6 +467,22 @@ function resolveDatabaseConnection() {
       return { url: value, envKey };
     }
   }
+
+  const host = String(process.env.PGHOST || "").trim();
+  const database = String(process.env.PGDATABASE || "").trim();
+  const user = String(process.env.PGUSER || "").trim();
+  const password = String(process.env.PGPASSWORD || "").trim();
+  const port = String(process.env.PGPORT || "5432").trim();
+  const sslmode = String(process.env.PGSSLMODE || "require").trim();
+
+  if (host && database && user) {
+    const auth = password
+      ? `${encodeURIComponent(user)}:${encodeURIComponent(password)}`
+      : encodeURIComponent(user);
+    const url = `postgresql://${auth}@${host}:${port}/${database}?sslmode=${encodeURIComponent(sslmode)}`;
+    return { url, envKey: "PGHOST/PGDATABASE/PGUSER" };
+  }
+
   return { url: "", envKey: null };
 }
 

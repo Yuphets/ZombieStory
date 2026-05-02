@@ -1,6 +1,7 @@
 node_modules/
 .env
 .env.local
+dist/
 server.log
 server.err.log
 server-node.log

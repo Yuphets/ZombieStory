@@ -10,6 +10,7 @@
     "@neondatabase/serverless": "^0.10.4"
   },
   "scripts": {
+    "build": "node scripts/build-static.js",
     "start": "node server.js"
   }
 }
