@@ -3,6 +3,8 @@ const fs = require("fs");
 const path = require("path");
 const { handleApiRequest } = require("./backend/api-handler");
 
+loadLocalEnv();
+
 const PORT = Number(process.env.PORT || 4174);
 const ROOT = __dirname;
 
@@ -58,4 +60,22 @@ function contentType(filePath) {
     ".png": "image/png"
   };
   return types[ext] || "application/octet-stream";
+}
+
+function loadLocalEnv() {
+  if (typeof process.loadEnvFile !== "function") {
+    return;
+  }
+
+  for (const file of [".env.local", ".env"]) {
+    const target = path.join(__dirname, file);
+    if (!fs.existsSync(target)) {
+      continue;
+    }
+    try {
+      process.loadEnvFile(target);
+    } catch {
+      // Ignore malformed local env files so the app can still boot with defaults.
+    }
+  }
 }

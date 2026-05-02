@@ -4,7 +4,7 @@
   "private": true,
   "type": "commonjs",
   "engines": {
-    "node": "22.x"
+    "node": "22"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4"
