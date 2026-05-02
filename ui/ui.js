@@ -7,7 +7,7 @@ export class UI {
     this.renderer = renderer;
   }
 
-  renderAccountGate({ onLogin, databaseOnline }) {
+  renderAccountGate({ onLogin, databaseOnline, artStatus, onSaveArtKey, onClearArtKey }) {
     this.root.innerHTML = shell(`
       <div class="page account-page">
         <section class="panel account-hero">
@@ -30,7 +30,8 @@ export class UI {
           <span class="panel-label">ACCOUNT</span>
           <form id="account-form" class="account-form">
             <div class="account-status-row">
-              <span class="status-chip">${databaseOnline ? "Database online" : "Offline fallback"}</span>
+              <span class="status-chip">${databaseOnline ? "Shared DB online" : "Offline fallback"}</span>
+              <span class="status-chip">${artStatus?.enabled ? "AI art ready" : "Sketch fallback"}</span>
             </div>
             <h2>Sign In</h2>
             <p>Enter a player name to create or reopen your account.</p>
@@ -39,8 +40,21 @@ export class UI {
               <input id="username" name="username" maxlength="32" autocomplete="off" placeholder="Example: Alex">
             </div>
             <button class="primary-button wide-button" type="submit">Enter The Story</button>
-            <p class="small">${databaseOnline ? "Progress is saved to the local JSON database after each choice." : "The database API is unavailable, so only local fallback mode is available right now."}</p>
+            <p class="small">${databaseOnline ? "Progress is saved to the shared database after each choice. On Vercel, this can run on Neon through the DATABASE_URL environment variable." : "The database API is unavailable, so only local fallback mode is available right now."}</p>
           </form>
+          <div class="account-art-setup">
+            <h3>AI Art Setup</h3>
+            <p class="small">Paste an OpenAI API key to turn scene panels into lifelike monochrome concept art with realistic people, shadows, and lighting. For Vercel, setting OPENAI_API_KEY in project environment variables is the cleanest global setup.</p>
+            <div class="field">
+              <label for="art-api-key">OpenAI API Key</label>
+              <input id="art-api-key" type="password" autocomplete="off" placeholder="sk-...">
+            </div>
+            <div class="form-actions flush">
+              <button class="plain-button" type="button" id="save-art-key">Save Art Key</button>
+              <button class="plain-button" type="button" id="clear-art-key">Disable AI Art</button>
+            </div>
+            <p class="small">${artStatus?.enabled ? `AI art is enabled through ${artStatus?.source === "environment" ? "the environment configuration" : "stored project settings"}.` : artStatus?.configured ? "A key is configured but AI art is not active yet." : "No art key is configured yet."}</p>
+          </div>
         </section>
       </div>
     `, { account: null, databaseOnline });
@@ -50,6 +64,11 @@ export class UI {
       const data = new FormData(event.currentTarget);
       onLogin(data.get("username"));
     });
+    this.root.querySelector("#save-art-key").addEventListener("click", () => {
+      const value = this.root.querySelector("#art-api-key").value;
+      onSaveArtKey(value);
+    });
+    this.root.querySelector("#clear-art-key").addEventListener("click", onClearArtKey);
   }
 
   renderResumePanel({ account, progress, onResume, onNew, onDelete, onLogout }) {
@@ -138,7 +157,7 @@ export class UI {
             <div class="shared-list">
               ${sharedAvatars.map((avatar) => sharedAvatar(avatar)).join("")}
             </div>
-            <p class="small">${databaseOnline ? "Shared avatars are synced through the database." : "Local fallback is active because the database API is unavailable."}</p>
+            <p class="small">${databaseOnline ? "Shared avatars are synced through the shared database layer." : "Local fallback is active because the database API is unavailable."}</p>
           </section>
         </aside>
       </div>
@@ -182,7 +201,7 @@ export class UI {
     this.root.querySelector("[data-logout]")?.addEventListener("click", onLogout);
   }
 
-  renderGame({ state, scene, sharedAvatars, onChoice, onNewGame, account, databaseOnline, onLogout }) {
+  renderGame({ state, scene, sharedAvatars, onChoice, onNewGame, account, databaseOnline, onLogout, sceneImage, artEnabled, onRegenerateArt }) {
     const isEnding = Boolean(scene.ending) || state.gameOver;
     this.root.innerHTML = shell(`
       <div class="page">
@@ -190,7 +209,14 @@ export class UI {
           ${state.coop.active ? coopBanner(state) : ""}
           <article class="panel">
             <span class="panel-label">${escapeHtml(scene.label || "PANEL")}</span>
-            <canvas class="scene-art" width="900" height="390" aria-label="Sketch illustration for ${escapeHtml(scene.label || "scene")}"></canvas>
+            <div class="scene-frame">
+              ${sceneImage ? `<img class="scene-image" src="${escapeHtml(sceneImage)}" alt="Lifelike scene art for ${escapeHtml(scene.label || "scene")}">` : ""}
+              <canvas class="scene-art ${sceneImage ? "is-hidden" : ""}" width="900" height="390" aria-label="Sketch illustration for ${escapeHtml(scene.label || "scene")}"></canvas>
+              <div class="scene-toolbar">
+                <span class="scene-toolbar-pill">${artEnabled ? (sceneImage ? "AI art" : "Generating art when available") : "Sketch fallback"}</span>
+                ${artEnabled ? `<button class="plain-button compact" type="button" id="regenerate-art">Refresh Art</button>` : ""}
+              </div>
+            </div>
             <div class="narration">
               ${formatText(scene.text)}
               ${isEnding ? `<p class="ending">${escapeHtml(scene.ending || "The End")}</p>` : ""}
@@ -244,6 +270,8 @@ export class UI {
     if (canvas) {
       requestAnimationFrame(() => this.renderer.draw(canvas, scene, state));
     }
+
+    this.root.querySelector("#regenerate-art")?.addEventListener("click", onRegenerateArt);
 
     if (isEnding) {
       this.root.querySelector("#new-game").addEventListener("click", onNewGame);

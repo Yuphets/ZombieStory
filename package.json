@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "type": "commonjs",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4"
+  },
   "scripts": {
     "start": "node server.js"
   }

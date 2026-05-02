@@ -13,6 +13,38 @@ async function loadJson(path) {
   return response.json();
 }
 
+async function postJson(path, body) {
+  const response = await fetch(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  if (!response.ok) {
+    throw new Error(`Unable to reach ${path}`);
+  }
+  return response.json();
+}
+
+async function putJson(path, body) {
+  const response = await fetch(path, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  if (!response.ok) {
+    throw new Error(`Unable to update ${path}`);
+  }
+  return response.json();
+}
+
+async function deleteJson(path) {
+  const response = await fetch(path, { method: "DELETE" });
+  if (!response.ok) {
+    throw new Error(`Unable to delete ${path}`);
+  }
+  return response.json();
+}
+
 class GameController {
   async init() {
     const [catalog, scenarios, scenes, events] = await Promise.all([
@@ -27,6 +59,9 @@ class GameController {
     this.story = new StoryEngine({ scenes, scenarios, events });
     this.world = new SharedWorld();
     await this.world.init();
+    this.art = { enabled: false, provider: "fallback" };
+    this.sceneImages = new Map();
+    this.renderNonce = 0;
     this.db = new DatabaseClient();
     this.account = null;
     this.savedProgress = null;
@@ -36,9 +71,18 @@ class GameController {
       renderer: new SketchRenderer()
     });
 
+    try {
+      this.art = await loadJson("/api/art-status");
+    } catch {
+      this.art = { enabled: false, provider: "fallback" };
+    }
+
     this.ui.renderAccountGate({
       onLogin: (username) => this.login(username),
-      databaseOnline: this.world.usingDatabase
+      databaseOnline: this.world.usingDatabase,
+      artStatus: this.art,
+      onSaveArtKey: (apiKey) => this.saveArtKey(apiKey),
+      onClearArtKey: () => this.clearArtKey()
     });
   }
 
@@ -123,11 +167,15 @@ class GameController {
     this.state = new GameState();
     this.ui.renderAccountGate({
       onLogin: (username) => this.login(username),
-      databaseOnline: this.world.usingDatabase
+      databaseOnline: this.world.usingDatabase,
+      artStatus: this.art,
+      onSaveArtKey: (apiKey) => this.saveArtKey(apiKey),
+      onClearArtKey: () => this.clearArtKey()
     });
   }
 
   renderScene(overrideScene = null) {
+    const nonce = ++this.renderNonce;
     const scene = overrideScene || (this.state.isDead()
       ? this.story.buildDeathScene(this.state)
       : this.story.getScene(this.state.currentSceneId));
@@ -145,8 +193,13 @@ class GameController {
       onNewGame: () => this.renderCreator(),
       account: this.account,
       databaseOnline: this.world.usingDatabase,
-      onLogout: () => this.logout()
+      onLogout: () => this.logout(),
+      sceneImage: this.sceneImages.get(this.sceneImageKey(scene)) || null,
+      artEnabled: this.art.enabled,
+      onRegenerateArt: () => this.loadSceneArt(scene, true)
     });
+
+    this.loadSceneArt(scene, false, nonce);
   }
 
   async choose(choice, scene) {
@@ -211,6 +264,93 @@ class GameController {
     if (this.account && this.world.usingDatabase) {
       const saved = await this.db.saveProgress(this.account.id, this.state.snapshot());
       this.savedProgress = saved.progress;
+    }
+  }
+
+  sceneImageKey(scene) {
+    return JSON.stringify({
+      sceneId: scene.id,
+      art: scene.art,
+      narration: scene.text,
+      avatarId: this.state.avatar?.id,
+      location: this.state.scenario?.location
+    });
+  }
+
+  async loadSceneArt(scene, force = false, nonce = this.renderNonce) {
+    if (!this.art.enabled || !scene?.id) {
+      return;
+    }
+
+    const key = this.sceneImageKey(scene);
+    if (this.sceneImages.has(key) && !force) {
+      return;
+    }
+
+    try {
+      const result = await postJson("/api/scene-art", {
+        sceneId: scene.id,
+        art: scene.art,
+        label: scene.label,
+        narration: scene.text,
+        avatar: this.state.avatar,
+        scenario: this.state.scenario,
+        accountId: this.account?.id || null,
+        force
+      });
+
+      if (!result.imageUrl) {
+        return;
+      }
+
+      this.sceneImages.set(key, `${result.imageUrl}?v=${force ? Date.now() : "cached"}`);
+      if (nonce === this.renderNonce) {
+        this.renderScene(scene);
+      }
+    } catch (error) {
+      this.ui.toast("AI art unavailable, using sketch fallback");
+      this.art.enabled = false;
+    }
+  }
+
+  async saveArtKey(apiKey) {
+    try {
+      this.art = await putJson("/api/settings/art", { apiKey });
+      this.ui.toast(this.art.enabled ? "AI art enabled" : "Art key saved");
+      if (!this.account) {
+        this.ui.renderAccountGate({
+          onLogin: (username) => this.login(username),
+          databaseOnline: this.world.usingDatabase,
+          artStatus: this.art,
+          onSaveArtKey: (value) => this.saveArtKey(value),
+          onClearArtKey: () => this.clearArtKey()
+        });
+      } else {
+        this.renderCreator();
+      }
+    } catch (error) {
+      this.ui.toast(error.message);
+    }
+  }
+
+  async clearArtKey() {
+    try {
+      this.art = await deleteJson("/api/settings/art");
+      this.sceneImages.clear();
+      this.ui.toast("AI art disabled");
+      if (!this.account) {
+        this.ui.renderAccountGate({
+          onLogin: (username) => this.login(username),
+          databaseOnline: this.world.usingDatabase,
+          artStatus: this.art,
+          onSaveArtKey: (value) => this.saveArtKey(value),
+          onClearArtKey: () => this.clearArtKey()
+        });
+      } else {
+        this.renderCreator();
+      }
+    } catch (error) {
+      this.ui.toast(error.message);
     }
   }
 }
