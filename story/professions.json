@@ -1,0 +1,108 @@
+{
+  "professions": [
+    {
+      "id": "military",
+      "label": "Military",
+      "summary": "Trained for violence, used to orders, carrying old ghosts.",
+      "bonuses": { "combat": 35, "stamina": 22, "medical": -8, "intimidation": 18, "morale": -4 },
+      "inventory": ["field knife", "canteen", "unit patch"]
+    },
+    {
+      "id": "high-school-student",
+      "label": "High School Student",
+      "summary": "Fast, overlooked, and better at reading a room than adults expect.",
+      "bonuses": { "combat": -10, "agility": 28, "scavenging": 8, "wisdom": -6, "morale": 6 },
+      "inventory": ["school backpack", "phone with cracked screen", "half pack of gum"]
+    },
+    {
+      "id": "nurse",
+      "label": "Nurse",
+      "summary": "Steady hands and a stubborn refusal to let people die alone.",
+      "bonuses": { "medical": 34, "combat": -8, "morale": 10, "scavenging": 6 },
+      "inventory": ["trauma shears", "bandage roll", "painkillers"]
+    },
+    {
+      "id": "doctor",
+      "label": "Doctor",
+      "summary": "Clinical under pressure, exhausted before the world even ended.",
+      "bonuses": { "medical": 38, "combat": -10, "wisdom": 12, "morale": 6 },
+      "inventory": ["medical bag", "stethoscope", "antiseptic"]
+    },
+    {
+      "id": "police-officer",
+      "label": "Police Officer",
+      "summary": "A badge still opens doors, though not always the right ones.",
+      "bonuses": { "combat": 26, "intimidation": 24, "medical": 4, "reputation": -2 },
+      "inventory": ["flashlight", "zip ties", "service radio"]
+    },
+    {
+      "id": "mechanic",
+      "label": "Mechanic",
+      "summary": "Can make dead engines cough back to life with wire and profanity.",
+      "bonuses": { "crafting": 34, "vehicleUse": 30, "combat": 6, "scavenging": 8 },
+      "inventory": ["socket wrench", "duct tape", "grease pencil"]
+    },
+    {
+      "id": "teacher",
+      "label": "Teacher",
+      "summary": "Knows how to calm panic, ration supplies, and improvise with nothing.",
+      "bonuses": { "wisdom": 22, "morale": 14, "scavenging": 6, "combat": -6 },
+      "inventory": ["attendance book", "red pen", "granola bar"]
+    },
+    {
+      "id": "athlete",
+      "label": "Athlete",
+      "summary": "Built to move, built to endure, still learning when not to run.",
+      "bonuses": { "stamina": 26, "agility": 22, "combat": 8, "hunger": -6 },
+      "inventory": ["gym bag", "water bottle", "knee tape"]
+    },
+    {
+      "id": "unemployed",
+      "label": "Unemployed",
+      "summary": "No title, no uniform, no one waiting for you to clock in.",
+      "bonuses": { "scavenging": 16, "wisdom": 6, "morale": -6, "reputation": 4 },
+      "inventory": ["cheap lighter", "bus pass", "last paycheck stub"]
+    },
+    {
+      "id": "chef",
+      "label": "Chef",
+      "summary": "Sharp knives, sharper timing, and an eye for edible miracles.",
+      "bonuses": { "scavenging": 14, "morale": 8, "combat": 6, "crafting": 8 },
+      "inventory": ["chef knife", "salt tin", "restaurant keys"]
+    },
+    {
+      "id": "engineer",
+      "label": "Engineer",
+      "summary": "Sees systems, weak points, and the terrible math of collapse.",
+      "bonuses": { "crafting": 30, "wisdom": 16, "vehicleUse": 12, "medical": -4 },
+      "inventory": ["multitool", "graph notebook", "wire spool"]
+    }
+  ],
+  "ageBands": [
+    {
+      "id": "teen",
+      "label": "Teen 13-17",
+      "bonuses": { "agility": 18, "stamina": 8, "combat": -8, "wisdom": -10, "morale": 2 }
+    },
+    {
+      "id": "young-adult",
+      "label": "Young Adult 18-25",
+      "bonuses": { "agility": 8, "stamina": 10, "combat": 4, "wisdom": -2 }
+    },
+    {
+      "id": "adult",
+      "label": "Adult 26-45",
+      "bonuses": { "combat": 6, "wisdom": 8, "morale": 4 }
+    },
+    {
+      "id": "older-adult",
+      "label": "Older Adult 46+",
+      "bonuses": { "wisdom": 22, "morale": 10, "stamina": -12, "agility": -8, "combat": -4 }
+    }
+  ],
+  "genders": [
+    { "id": "male", "label": "Male" },
+    { "id": "female", "label": "Female" },
+    { "id": "non-binary", "label": "Non-binary" }
+  ]
+}

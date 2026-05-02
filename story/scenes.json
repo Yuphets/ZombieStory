@@ -1,0 +1,649 @@
+{
+  "checkpoint_arrival": {
+    "id": "checkpoint_arrival",
+    "label": "CHECKPOINT",
+    "art": "checkpoint",
+    "text": "Smoke stitches the morning sky above the checkpoint. Your unit is scattered, command is static, and civilians press against the barricade with eyes that have already seen too much. Someone pounds on the gate. Someone behind you whispers that the dead are learning to run.",
+    "choices": [
+      { "text": "Hold the gate and organize the civilians", "next": "barricade_hold", "effects": { "stats": { "stamina": -10, "morale": 8 }, "skills": { "combat": 2 }, "reputation": 8, "flag": "protected_civilians" } },
+      { "text": "Raid the armory before command collapses", "next": "armory_choice", "effects": { "stats": { "supplies": 12, "morale": -4 }, "inventory": ["ammo box"], "reputation": -4 } },
+      { "text": "Slip out through the drainage ditch", "next": "city_streets", "effects": { "stats": { "stamina": -6 }, "skills": { "agility": 2 }, "reputation": -2 } }
+    ]
+  },
+  "suburb_arrival": {
+    "id": "suburb_arrival",
+    "label": "SUBURB",
+    "art": "suburb",
+    "text": "The suburbs look almost normal from a distance. Curtains move. Dogs bark from locked houses. Then you notice the blood on the welcome mats and the grocery cart overturned in the middle of the road. Home is a word with teeth now.",
+    "choices": [
+      { "text": "Search houses quietly for supplies", "next": "quiet_scavenge", "effects": { "stats": { "supplies": 10, "stamina": -6, "hunger": -4 }, "skills": { "scavenging": 2 } } },
+      { "text": "Follow the crying from the blue house", "next": "blue_house", "effects": { "stats": { "morale": -4 }, "reputation": 6, "flag": "answered_crying" } },
+      { "text": "Get to the main road before dark", "next": "city_streets", "effects": { "stats": { "stamina": -8, "hunger": -3 } } }
+    ]
+  },
+  "overpass_arrival": {
+    "id": "overpass_arrival",
+    "label": "UNDERPASS",
+    "art": "overpass",
+    "text": "Rain drums on the concrete ribs of the overpass. The people who slept here last night left in a hurry: blankets, shoes, a dented pot still warm over a dying trash fire. On the wall, someone wrote WE SHARE OR WE STARVE.",
+    "choices": [
+      { "text": "Take what was left behind", "next": "city_streets", "effects": { "stats": { "supplies": 9, "morale": -5 }, "reputation": -5, "inventory": ["dented pot"] } },
+      { "text": "Leave a warning sign and move on", "next": "city_streets", "effects": { "stats": { "morale": 3 }, "reputation": 5 } },
+      { "text": "Wait under the bridge for the owners", "next": "underpass_return", "effects": { "stats": { "stamina": 6, "hunger": -8 }, "skills": { "wisdom": 2 } } }
+    ]
+  },
+  "school_lockdown": {
+    "id": "school_lockdown",
+    "label": "LOCKDOWN",
+    "art": "school",
+    "text": "The intercom clicks every few minutes, but no voice follows. Desks are wedged against the door. Down the hall, lockers rattle like someone is dragging a chain across them. A message in marker on the window reads: THEY ARE IN THE GYM.",
+    "choices": [
+      { "text": "Lead everyone through the library windows", "next": "library_escape", "effects": { "stats": { "stamina": -8, "morale": 8 }, "skills": { "agility": 2 }, "reputation": 8, "flag": "saved_students" } },
+      { "text": "Use the PA system to draw infected away", "next": "noise_lure", "effects": { "stats": { "morale": -5 }, "skills": { "wisdom": 2 }, "flag": "made_noise" } },
+      { "text": "Barricade in place and ration snacks", "next": "classroom_night", "effects": { "stats": { "hunger": 6, "supplies": -4, "morale": -2 } } }
+    ]
+  },
+  "mall_arrival": {
+    "id": "mall_arrival",
+    "label": "MALL",
+    "art": "mall",
+    "text": "The food court is a mural of spilled soda and abandoned shoes. Security gates hang half-closed. From the sporting goods store comes the steady beep of a register, still asking for payment while the world forgets what money meant.",
+    "choices": [
+      { "text": "Arm yourself in sporting goods", "next": "mall_sporting", "effects": { "stats": { "supplies": 10 }, "skills": { "combat": 2 }, "inventory": ["baseball bat", "camp stove"] } },
+      { "text": "Look for survivors in the food court", "next": "food_court_group", "effects": { "stats": { "morale": 4 }, "reputation": 4 } },
+      { "text": "Take the loading corridor outside", "next": "city_streets", "effects": { "stats": { "stamina": -5 }, "skills": { "agility": 2 } } }
+    ]
+  },
+  "hospital_shift": {
+    "id": "hospital_shift",
+    "label": "HOSPITAL",
+    "art": "hospital",
+    "text": "The hospital generator coughs. Emergency lights paint every face red. Triage tags run out before the bodies do. Behind the double doors, a patient flatlines, then sits up with a sound no living throat should make.",
+    "choices": [
+      { "text": "Evacuate the children from pediatrics", "next": "pediatric_ward", "effects": { "stats": { "stamina": -12, "morale": 8 }, "reputation": 10, "flag": "saved_children" } },
+      { "text": "Lock the ward and take medical supplies", "next": "pharmacy_run", "effects": { "stats": { "supplies": 14, "morale": -8 }, "inventory": ["antibiotics"], "reputation": -6 } },
+      { "text": "Use the ambulance bay to escape", "next": "ambulance_bay", "effects": { "stats": { "stamina": -8 }, "skills": { "vehicleUse": 2 } } }
+    ]
+  },
+  "ambulance_bay": {
+    "id": "ambulance_bay",
+    "label": "AMBULANCE BAY",
+    "art": "hospital",
+    "text": "Ambulances sit nose-out like horses waiting for a starting gun. One has keys in the visor. Another has someone trapped inside, alive enough to bang weakly on the glass.",
+    "choices": [
+      { "text": "Free the trapped paramedic", "next": "paramedic_saved", "effects": { "stats": { "stamina": -6, "morale": 6 }, "reputation": 8, "inventory": ["paramedic contact"] } },
+      { "text": "Take the working ambulance and go", "next": "roadblock_arrival", "effects": { "stats": { "supplies": 8, "morale": -4 }, "skills": { "vehicleUse": 2 }, "reputation": -3 } },
+      { "text": "Strip the ambulances for supplies", "next": "city_streets", "effects": { "stats": { "supplies": 16, "stamina": -8 }, "skills": { "scavenging": 2 } } }
+    ]
+  },
+  "clinic_lockin": {
+    "id": "clinic_lockin",
+    "label": "CLINIC",
+    "art": "hospital",
+    "text": "Your clinic has one exam room, two exits, and a waiting area full of people who still believe professionals know what to do. The radio says stay calm. The street outside says run.",
+    "choices": [
+      { "text": "Treat whoever you can before leaving", "next": "city_streets", "effects": { "stats": { "medical": 0, "morale": 6, "supplies": -5 }, "reputation": 10 } },
+      { "text": "Convert the clinic into a hideout", "next": "clinic_hideout", "effects": { "stats": { "supplies": -4, "morale": 4 }, "skills": { "crafting": 2 }, "flag": "clinic_hideout" } },
+      { "text": "Empty the pharmacy cabinet", "next": "city_streets", "effects": { "stats": { "supplies": 12, "morale": -5 }, "inventory": ["controlled meds"], "reputation": -3 } }
+    ]
+  },
+  "clinic_hideout": {
+    "id": "clinic_hideout",
+    "label": "CLINIC HIDEOUT",
+    "art": "hospital",
+    "text": "By midnight the clinic has rules taped to the door: knock twice, no fever, no lies. It is small, but it has clean counters, locked cabinets, and enough chairs for people to pretend waiting still means help is coming.",
+    "choices": [
+      { "text": "Open the clinic to wounded strangers", "next": "community_thread", "effects": { "stats": { "supplies": -6, "morale": 8 }, "skills": { "medical": 2 }, "reputation": 12 } },
+      { "text": "Keep it hidden as your private fallback", "next": "city_streets", "effects": { "stats": { "supplies": 6, "morale": -4 }, "reputation": -5, "flag": "private_clinic" } },
+      { "text": "Trade treatment for food and protection", "next": "temporary_shelter", "effects": { "stats": { "supplies": 8, "morale": 2 }, "reputation": 4 } }
+    ]
+  },
+  "station_riot": {
+    "id": "station_riot",
+    "label": "STATION",
+    "art": "station",
+    "text": "The holding cells are full of bitten people and people accused of being bitten. The difference matters less every minute. A rookie is crying by the evidence locker, asking who gets saved first.",
+    "choices": [
+      { "text": "Release the uninfected prisoners", "next": "evidence_locker", "effects": { "stats": { "morale": 4 }, "reputation": 8, "flag": "released_prisoners" } },
+      { "text": "Secure the evidence locker", "next": "evidence_locker", "effects": { "stats": { "supplies": 12 }, "skills": { "combat": 2 }, "reputation": -4 } },
+      { "text": "Escort the rookie out", "next": "city_streets", "effects": { "stats": { "stamina": -6, "morale": 5 }, "reputation": 6, "inventory": ["rookie ally"] } }
+    ]
+  },
+  "roadblock_arrival": {
+    "id": "roadblock_arrival",
+    "label": "ROADBLOCK",
+    "art": "roadblock",
+    "text": "Cars are packed bumper to bumper beneath dead traffic lights. Someone tried to make a roadblock out of school buses. Someone else tried to drive through it. Neither plan worked.",
+    "choices": [
+      { "text": "Search trunks before nightfall", "next": "trunk_search", "effects": { "stats": { "supplies": 10, "stamina": -7 }, "skills": { "scavenging": 2 } } },
+      { "text": "Clear a path for anyone still alive", "next": "convoy_choice", "effects": { "stats": { "stamina": -12, "morale": 6 }, "skills": { "crafting": 2 }, "reputation": 8 } },
+      { "text": "Climb the buses and scout ahead", "next": "city_streets", "effects": { "stats": { "stamina": -4 }, "skills": { "wisdom": 2 } } }
+    ]
+  },
+  "garage_start": {
+    "id": "garage_start",
+    "label": "GARAGE",
+    "art": "garage",
+    "text": "The garage smells like gasoline, oil, and panic. A family pounds on the roll-up door while a dead customer crawls beneath the lift. There is an old delivery van in bay three. It might run if you make it believe.",
+    "choices": [
+      { "text": "Repair the delivery van", "next": "van_escape", "requires": { "skill": "crafting", "gte": 40 }, "effects": { "stats": { "stamina": -10 }, "skills": { "vehicleUse": 2 }, "inventory": ["delivery van"] } },
+      { "text": "Let the family inside", "next": "family_in_garage", "effects": { "stats": { "morale": 6, "supplies": -4 }, "reputation": 8, "flag": "helped_family" } },
+      { "text": "Grab tools and flee through the office", "next": "city_streets", "effects": { "stats": { "supplies": 8 }, "inventory": ["toolbox"], "reputation": -2 } }
+    ]
+  },
+  "tow_yard": {
+    "id": "tow_yard",
+    "label": "TOW YARD",
+    "art": "garage",
+    "text": "Rows of impounded cars glitter under security lights. The fence keeps infected out for now. It also keeps you in with a man in the office who has a shotgun and a very small definition of community.",
+    "choices": [
+      { "text": "Offer repairs in exchange for shelter", "next": "temporary_shelter", "effects": { "stats": { "morale": 6, "hunger": 6 }, "reputation": 5 } },
+      { "text": "Steal fuel from the lot", "next": "city_streets", "effects": { "stats": { "supplies": 10 }, "reputation": -7, "inventory": ["fuel can"] } },
+      { "text": "Cut through the fence and leave", "next": "city_streets", "effects": { "stats": { "stamina": -6 }, "skills": { "agility": 2 } } }
+    ]
+  },
+  "bus_depot": {
+    "id": "bus_depot",
+    "label": "BUS DEPOT",
+    "art": "garage",
+    "text": "The depot loudspeaker loops a cancellation notice. Inside, a city bus waits with a full tank and a cracked windshield. The route sign still reads DOWNTOWN, which feels like a dare.",
+    "choices": [
+      { "text": "Start the bus and make a rescue route", "next": "convoy_choice", "effects": { "stats": { "stamina": -10, "morale": 8 }, "reputation": 10, "inventory": ["city bus"] } },
+      { "text": "Strip the depot for parts", "next": "city_streets", "effects": { "stats": { "supplies": 12, "stamina": -6 }, "skills": { "crafting": 2 } } },
+      { "text": "Use the roof as a quiet camp", "next": "temporary_shelter", "effects": { "stats": { "stamina": 10, "hunger": -6 } } }
+    ]
+  },
+  "museum_start": {
+    "id": "museum_start",
+    "label": "MUSEUM",
+    "art": "museum",
+    "text": "A school field trip becomes a siege among dinosaur bones and glass cases. Children hide beneath the fossil whale. The security guard offers you a ring of keys with shaking hands.",
+    "choices": [
+      { "text": "Move the children through the staff tunnel", "next": "library_escape", "effects": { "stats": { "stamina": -10, "morale": 8 }, "reputation": 10, "flag": "saved_children" } },
+      { "text": "Barricade the exhibit hall", "next": "temporary_shelter", "effects": { "stats": { "supplies": -5, "morale": 4 }, "skills": { "crafting": 2 } } },
+      { "text": "Take the keys and scout alone", "next": "city_streets", "effects": { "stats": { "supplies": 4, "morale": -4 }, "inventory": ["museum keys"], "reputation": -4 } }
+    ]
+  },
+  "school_empty": {
+    "id": "school_empty",
+    "label": "AFTER HOURS",
+    "art": "school",
+    "text": "The school after hours was always eerie. Now the trophy case is broken, the nurse's office is open, and one classroom has a message written in chalk: DO NOT TRUST THE BUS DRIVER.",
+    "choices": [
+      { "text": "Raid the nurse's office", "next": "city_streets", "effects": { "stats": { "supplies": 10 }, "skills": { "medical": 2 }, "inventory": ["school med kit"] } },
+      { "text": "Check the buses anyway", "next": "bus_depot", "effects": { "stats": { "stamina": -5 }, "skills": { "wisdom": 2 } } },
+      { "text": "Leave a map for whoever returns", "next": "city_streets", "effects": { "stats": { "morale": 4 }, "reputation": 5 } }
+    ]
+  },
+  "stadium_practice": {
+    "id": "stadium_practice",
+    "label": "STADIUM",
+    "art": "stadium",
+    "text": "Practice ends when the first scream rolls across the bleachers. The coach locks the equipment room. Fans flood the field. The tunnel to the street is open, but so is the gate to the shelter under the stands.",
+    "choices": [
+      { "text": "Sprint for the street", "next": "city_streets", "effects": { "stats": { "stamina": -8 }, "skills": { "agility": 3 } } },
+      { "text": "Break open the equipment room", "next": "gym_start", "effects": { "stats": { "supplies": 8 }, "skills": { "combat": 2 } } },
+      { "text": "Guide the crowd under the stands", "next": "temporary_shelter", "effects": { "stats": { "morale": 6, "stamina": -10 }, "reputation": 8 } }
+    ]
+  },
+  "gym_start": {
+    "id": "gym_start",
+    "label": "GYM",
+    "art": "school",
+    "text": "The gym doors are chained from the outside. The locker room has protein bars, towels, and one narrow window painted shut. Outside, shoes squeak across the court with no rhythm at all.",
+    "choices": [
+      { "text": "Force the window open", "next": "city_streets", "effects": { "stats": { "stamina": -8 }, "skills": { "agility": 2 } } },
+      { "text": "Make padding from towels and tape", "next": "city_streets", "effects": { "stats": { "supplies": 5 }, "skills": { "crafting": 2 }, "inventory": ["padded jacket"] } },
+      { "text": "Wait until the noise passes", "next": "temporary_shelter", "effects": { "stats": { "stamina": 8, "hunger": -8, "morale": -3 } } }
+    ]
+  },
+  "job_center": {
+    "id": "job_center",
+    "label": "JOB CENTER",
+    "art": "office",
+    "text": "The job center is full of laminated optimism: BUILD YOUR FUTURE, START TODAY. The future starts with vending machine crackers and a locked emergency exit.",
+    "choices": [
+      { "text": "Crack the vending machines", "next": "city_streets", "effects": { "stats": { "supplies": 9, "hunger": 8 }, "reputation": -2 } },
+      { "text": "Help strangers climb the emergency exit", "next": "city_streets", "effects": { "stats": { "stamina": -8, "morale": 5 }, "reputation": 8 } },
+      { "text": "Read the notice board for leads", "next": "radio_hint", "effects": { "skills": { "wisdom": 2 }, "stats": { "morale": 2 } } }
+    ]
+  },
+  "restaurant_start": {
+    "id": "restaurant_start",
+    "label": "KITCHEN",
+    "art": "restaurant",
+    "text": "The line cooks left burners on and prayers half-finished. The dining room windows are smeared with handprints. In the walk-in freezer, someone is begging to be let out. They will not say if they were bitten.",
+    "choices": [
+      { "text": "Open the freezer and check them", "next": "freezer_mercy", "effects": { "stats": { "morale": 4 }, "skills": { "medical": 1 }, "reputation": 6 } },
+      { "text": "Pack food before the power dies", "next": "city_streets", "effects": { "stats": { "supplies": 16, "hunger": 8 }, "inventory": ["kitchen knife"], "reputation": -2 } },
+      { "text": "Use the back alley exit", "next": "city_streets", "effects": { "stats": { "stamina": -4 }, "skills": { "agility": 2 } } }
+    ]
+  },
+  "food_truck": {
+    "id": "food_truck",
+    "label": "FOOD TRUCK",
+    "art": "restaurant",
+    "text": "The food truck is parked sideways across an intersection, its grill cold and its propane tank half full. A child points at it from a second-floor window and mouths one word: hungry.",
+    "choices": [
+      { "text": "Cook what you can and share it", "next": "community_thread", "effects": { "stats": { "supplies": -8, "morale": 10 }, "reputation": 12 } },
+      { "text": "Take the propane for later", "next": "city_streets", "effects": { "stats": { "supplies": 8 }, "inventory": ["propane tank"], "reputation": -3 } },
+      { "text": "Trade food for information", "next": "radio_hint", "effects": { "stats": { "supplies": -4 }, "reputation": 5 } }
+    ]
+  },
+  "market_start": {
+    "id": "market_start",
+    "label": "MARKET",
+    "art": "market",
+    "text": "The produce market rots in beautiful colors. Flies rise like ash when you move. A vendor with a bandaged arm guards the canned goods and asks what your conscience is worth.",
+    "choices": [
+      { "text": "Trade fairly with the vendor", "next": "city_streets", "effects": { "stats": { "supplies": 8, "morale": 3 }, "reputation": 7 } },
+      { "text": "Distract the vendor and steal cans", "next": "city_streets", "effects": { "stats": { "supplies": 15, "morale": -6 }, "reputation": -8 } },
+      { "text": "Treat the bandaged arm first", "next": "community_thread", "effects": { "stats": { "supplies": 5 }, "skills": { "medical": 2 }, "reputation": 9 } }
+    ]
+  },
+  "server_room": {
+    "id": "server_room",
+    "label": "SERVER ROOM",
+    "art": "office",
+    "text": "The servers keep humming after everyone stops answering email. A municipal alert terminal still has power. You can send one message before the backup batteries die.",
+    "choices": [
+      { "text": "Broadcast shelter coordinates", "next": "radio_hint", "effects": { "stats": { "morale": 6 }, "reputation": 8, "flag": "broadcast_help" } },
+      { "text": "Download city utility maps", "next": "city_streets", "effects": { "skills": { "wisdom": 4 }, "inventory": ["utility maps"] } },
+      { "text": "Use batteries for your own kit", "next": "city_streets", "effects": { "stats": { "supplies": 8, "morale": -3 }, "reputation": -3, "inventory": ["battery pack"] } }
+    ]
+  },
+  "bridge_start": {
+    "id": "bridge_start",
+    "label": "BRIDGE",
+    "art": "bridge",
+    "text": "The north bridge groans under abandoned cars and desperate footsteps. The army wired charges along the supports before they vanished. A crowd is still crossing.",
+    "choices": [
+      { "text": "Defuse enough charges to keep it standing", "next": "bridge_saved", "requires": { "skill": "crafting", "gte": 42 }, "effects": { "stats": { "stamina": -12, "morale": 8 }, "reputation": 14 } },
+      { "text": "Warn the crowd and run", "next": "city_streets", "effects": { "stats": { "stamina": -10, "morale": -4 }, "reputation": 5 } },
+      { "text": "Mark the weak supports on your map", "next": "radio_hint", "effects": { "skills": { "wisdom": 3 }, "inventory": ["bridge notes"] } }
+    ]
+  },
+  "power_plant": {
+    "id": "power_plant",
+    "label": "POWER PLANT",
+    "art": "industrial",
+    "text": "The power plant fence hums with one last dirty miracle. Inside, lights still burn over empty desks. Outside, a neighborhood watches the skyline, hoping someone keeps the cold away.",
+    "choices": [
+      { "text": "Stabilize the substation for the neighborhood", "next": "community_thread", "requires": { "skill": "crafting", "gte": 40 }, "effects": { "stats": { "stamina": -12, "morale": 10 }, "reputation": 12, "flag": "kept_power" } },
+      { "text": "Take parts for a portable generator", "next": "city_streets", "effects": { "stats": { "supplies": 12, "morale": -4 }, "reputation": -4, "inventory": ["generator parts"] } },
+      { "text": "Leave before the plant draws infected", "next": "city_streets", "effects": { "stats": { "stamina": -4 }, "skills": { "wisdom": 2 } } }
+    ]
+  },
+  "barricade_hold": {
+    "id": "barricade_hold",
+    "label": "THE GATE",
+    "art": "checkpoint",
+    "text": "You hold the line until holding becomes choosing. A bitten father asks you to let his daughter through. A soldier raises a rifle. The daughter is not bitten. The father knows he is.",
+    "choices": [
+      { "text": "Let the girl in and keep the father outside", "next": "city_streets", "effects": { "stats": { "morale": -5 }, "reputation": 10, "flag": "saved_girl" } },
+      { "text": "Let them both in and isolate him", "next": "temporary_shelter", "effects": { "stats": { "supplies": -4, "morale": 4 }, "reputation": 8, "flag": "quarantine_attempt" } },
+      { "text": "Close the gate on everyone", "next": "armory_choice", "effects": { "stats": { "morale": -12, "supplies": 8 }, "reputation": -12 } }
+    ]
+  },
+  "armory_choice": {
+    "id": "armory_choice",
+    "label": "ARMORY",
+    "art": "checkpoint",
+    "text": "The armory is a steel room full of terrible answers. Weapons will keep you alive. Weapons will also make every hungry person look at you differently.",
+    "choices": [
+      { "text": "Take only what you can hide", "next": "city_streets", "effects": { "stats": { "supplies": 8 }, "skills": { "combat": 2 } } },
+      { "text": "Arm a small civilian guard", "next": "community_thread", "effects": { "stats": { "morale": 6, "supplies": -6 }, "reputation": 10 } },
+      { "text": "Keep the best weapons for yourself", "next": "city_streets", "effects": { "stats": { "supplies": 14, "morale": -6 }, "skills": { "intimidation": 3 }, "reputation": -8 } }
+    ]
+  },
+  "quiet_scavenge": {
+    "id": "quiet_scavenge",
+    "label": "OPEN DRAWERS",
+    "art": "suburb",
+    "text": "You learn the new language of empty homes: aspirin in the bathroom, batteries in junk drawers, grief in refrigerator photos. In one kitchen, a handwritten note says TAKE WHAT YOU NEED, LEAVE WHAT YOU CAN.",
+    "choices": [
+      { "text": "Leave supplies for the next survivor", "next": "city_streets", "effects": { "stats": { "supplies": -3, "morale": 5 }, "reputation": 7 } },
+      { "text": "Take everything useful", "next": "city_streets", "effects": { "stats": { "supplies": 10, "morale": -3 }, "reputation": -4 } },
+      { "text": "Spend time looking for family records", "next": "radio_hint", "effects": { "stats": { "stamina": -5, "morale": 4 }, "skills": { "wisdom": 2 } } }
+    ]
+  },
+  "blue_house": {
+    "id": "blue_house",
+    "label": "BLUE HOUSE",
+    "art": "suburb",
+    "text": "The crying belongs to an elderly woman trapped behind a collapsed bookshelf. Her son is infected in the hallway, still wearing a birthday hat. She asks you not to hurt him where she can see.",
+    "choices": [
+      { "text": "Help her out and respect her request", "next": "community_thread", "effects": { "stats": { "stamina": -8, "morale": -4 }, "reputation": 12, "inventory": ["silver locket"] } },
+      { "text": "Put the son down quickly", "next": "city_streets", "effects": { "stats": { "morale": -6 }, "skills": { "combat": 2 }, "reputation": 4 } },
+      { "text": "Leave before the hallway fills", "next": "city_streets", "effects": { "stats": { "morale": -8, "stamina": 2 }, "reputation": -8 } }
+    ]
+  },
+  "library_escape": {
+    "id": "library_escape",
+    "label": "LIBRARY",
+    "art": "school",
+    "text": "Books rain from shelves as people squeeze through the windows. Someone drops a backpack. Someone else reaches back for it. The infected are close enough that every small mercy has a price tag.",
+    "choices": [
+      { "text": "Go back for the backpack", "next": "city_streets", "effects": { "stats": { "stamina": -8, "supplies": 8 }, "reputation": 5 } },
+      { "text": "Keep everyone moving", "next": "community_thread", "effects": { "stats": { "morale": 8 }, "reputation": 10 } },
+      { "text": "Split off alone through the alley", "next": "city_streets", "effects": { "stats": { "stamina": -4 }, "reputation": -4 } }
+    ]
+  },
+  "noise_lure": {
+    "id": "noise_lure",
+    "label": "PA SYSTEM",
+    "art": "school",
+    "text": "Your voice booms through the school, cracking on the final word. The infected turn as one. For ten seconds, the halls belong to the living. Then the speakers shriek and die.",
+    "choices": [
+      { "text": "Run with the crowd", "next": "city_streets", "effects": { "stats": { "stamina": -10, "morale": 5 }, "reputation": 8 } },
+      { "text": "Stay behind to hold the door", "next": "last_door", "effects": { "stats": { "health": -12, "stamina": -8 }, "reputation": 12 } },
+      { "text": "Hide in the nurse's office", "next": "school_empty", "effects": { "stats": { "supplies": 4, "morale": -3 } } }
+    ]
+  },
+  "classroom_night": {
+    "id": "classroom_night",
+    "label": "ROOM 214",
+    "art": "school",
+    "text": "Night puts every sound under a magnifying glass. A student offers you their last candy bar. Another asks whether their parents are dead. You have no answer that does not taste like ash.",
+    "choices": [
+      { "text": "Tell the truth: you do not know", "next": "library_escape", "effects": { "stats": { "morale": 4 }, "reputation": 6 } },
+      { "text": "Promise their parents are coming", "next": "library_escape", "effects": { "stats": { "morale": 8 }, "reputation": -3 } },
+      { "text": "Eat your share and sleep", "next": "city_streets", "effects": { "stats": { "stamina": 10, "hunger": 8 }, "reputation": -4 } }
+    ]
+  },
+  "mall_sporting": {
+    "id": "mall_sporting",
+    "label": "SPORTING GOODS",
+    "art": "mall",
+    "text": "Bats, arrows, camping fuel, rain ponchos: civilization sold apocalypse kits by accident. A clerk is hiding beneath the counter with the safe keys and a bleeding bite on his wrist.",
+    "choices": [
+      { "text": "Use the keys, then lock him somewhere quiet", "next": "city_streets", "effects": { "stats": { "supplies": 10, "morale": -4 }, "reputation": 2 } },
+      { "text": "Try to treat the bite", "next": "food_court_group", "requires": { "skill": "medical", "gte": 35 }, "effects": { "stats": { "morale": 5, "supplies": -3 }, "reputation": 8 } },
+      { "text": "Leave the store before he turns", "next": "city_streets", "effects": { "stats": { "stamina": -4 }, "reputation": -2 } }
+    ]
+  },
+  "food_court_group": {
+    "id": "food_court_group",
+    "label": "FOOD COURT",
+    "art": "mall",
+    "text": "Six survivors have made a fort out of overturned tables. They have children, panic, and not enough food. Their leader asks if you are useful or just hungry.",
+    "choices": [
+      { "text": "Join their scavenge rotation", "next": "community_thread", "effects": { "stats": { "supplies": 8, "morale": 6 }, "reputation": 8, "flag": "mall_group" } },
+      { "text": "Trade supplies and leave", "next": "city_streets", "effects": { "stats": { "supplies": 4 }, "reputation": 3 } },
+      { "text": "Threaten them for a bigger share", "next": "city_streets", "requires": { "skill": "intimidation", "gte": 38 }, "effects": { "stats": { "supplies": 14, "morale": -8 }, "reputation": -12 } }
+    ]
+  },
+  "pediatric_ward": {
+    "id": "pediatric_ward",
+    "label": "PEDIATRICS",
+    "art": "hospital",
+    "text": "The pediatric ward smells like disinfectant and crayons. You carry one child. Two more hold your coat. A parent blocks the stairwell, bitten and begging you to save them too.",
+    "choices": [
+      { "text": "Risk helping the parent down the stairs", "next": "community_thread", "effects": { "stats": { "health": -8, "stamina": -8, "morale": 4 }, "reputation": 12 } },
+      { "text": "Save the children first", "next": "community_thread", "effects": { "stats": { "morale": -4 }, "reputation": 10 } },
+      { "text": "Hand the children to staff and leave", "next": "city_streets", "effects": { "stats": { "stamina": 2, "morale": -3 }, "reputation": 2 } }
+    ]
+  },
+  "pharmacy_run": {
+    "id": "pharmacy_run",
+    "label": "PHARMACY",
+    "art": "hospital",
+    "text": "The pharmacy shelves are a cruel kind of treasure. Insulin, antibiotics, sedatives, painkillers. You cannot carry enough for everyone. Maybe no one can.",
+    "choices": [
+      { "text": "Take broad-use medicine for trade", "next": "city_streets", "effects": { "stats": { "supplies": 12 }, "inventory": ["medicine cache"], "reputation": -2 } },
+      { "text": "Leave insulin labeled for patients", "next": "city_streets", "effects": { "stats": { "supplies": -3, "morale": 5 }, "reputation": 8 } },
+      { "text": "Set up a tiny treatment station", "next": "community_thread", "effects": { "stats": { "supplies": -5, "morale": 8 }, "reputation": 12 } }
+    ]
+  },
+  "paramedic_saved": {
+    "id": "paramedic_saved",
+    "label": "PARAMEDIC",
+    "art": "hospital",
+    "text": "The paramedic gives you a route map marked with blocked streets and whispered shelters. They also warn you: the stadium broadcast is real, but so are the raiders listening to it.",
+    "choices": [
+      { "text": "Head for the stadium broadcast", "next": "radio_hint", "effects": { "stats": { "morale": 6 }, "inventory": ["route map"] } },
+      { "text": "Avoid crowds and cut through alleys", "next": "city_streets", "effects": { "stats": { "stamina": -5 }, "skills": { "agility": 2 } } },
+      { "text": "Stay and help them treat the wounded", "next": "community_thread", "effects": { "stats": { "supplies": -4, "morale": 8 }, "reputation": 10 } }
+    ]
+  },
+  "evidence_locker": {
+    "id": "evidence_locker",
+    "label": "EVIDENCE",
+    "art": "station",
+    "text": "Inside the locker: cash, weapons, confiscated medicine, and a notebook naming corrupt cops and local gangs. In the old world it was evidence. In this one it is leverage.",
+    "choices": [
+      { "text": "Use the notebook to negotiate safe passage", "next": "radio_hint", "effects": { "skills": { "wisdom": 2 }, "reputation": 5, "inventory": ["blackmail notebook"] } },
+      { "text": "Burn the notebook and take medicine", "next": "city_streets", "effects": { "stats": { "supplies": 8, "morale": 3 }, "inventory": ["medicine cache"] } },
+      { "text": "Keep everything for yourself", "next": "city_streets", "effects": { "stats": { "supplies": 14, "morale": -6 }, "reputation": -8 } }
+    ]
+  },
+  "trunk_search": {
+    "id": "trunk_search",
+    "label": "TRUNKS",
+    "art": "roadblock",
+    "text": "Every trunk is a biography. Soccer cleats. Cat food. A wedding dress. A tire iron wrapped in a towel. One car has a baby seat and a cooler that is still cold.",
+    "choices": [
+      { "text": "Take the cooler and leave a note", "next": "city_streets", "effects": { "stats": { "supplies": 8, "morale": -2 }, "reputation": -1 } },
+      { "text": "Search for survivors instead of loot", "next": "community_thread", "effects": { "stats": { "stamina": -8, "morale": 5 }, "reputation": 9 } },
+      { "text": "Use the tire iron as a weapon", "next": "city_streets", "effects": { "skills": { "combat": 2 }, "inventory": ["tire iron"] } }
+    ]
+  },
+  "convoy_choice": {
+    "id": "convoy_choice",
+    "label": "CONVOY",
+    "art": "roadblock",
+    "text": "A chain of cars starts moving behind you. For a moment, the road sounds alive again. Then a family in the lead car runs out of fuel and blocks everyone.",
+    "choices": [
+      { "text": "Share fuel and keep the convoy together", "next": "community_thread", "effects": { "stats": { "supplies": -8, "morale": 8 }, "reputation": 12 } },
+      { "text": "Push their car aside", "next": "city_streets", "effects": { "stats": { "stamina": -8, "morale": -4 }, "reputation": -5 } },
+      { "text": "Send scouts ahead on foot", "next": "radio_hint", "effects": { "stats": { "stamina": -5 }, "skills": { "wisdom": 2 }, "reputation": 4 } }
+    ]
+  },
+  "van_escape": {
+    "id": "van_escape",
+    "label": "VAN",
+    "art": "garage",
+    "text": "The delivery van coughs, protests, and finally turns over. Its side still advertises birthday cakes. People cheer when they hear the engine. You can fill it with people or fill it with supplies.",
+    "choices": [
+      { "text": "Use the van as a rescue vehicle", "next": "community_thread", "effects": { "stats": { "supplies": -6, "morale": 8 }, "reputation": 12 } },
+      { "text": "Load supplies and leave fast", "next": "city_streets", "effects": { "stats": { "supplies": 14, "morale": -4 }, "reputation": -5 } },
+      { "text": "Trade seats for fuel and food", "next": "radio_hint", "effects": { "stats": { "supplies": 8 }, "reputation": 2 } }
+    ]
+  },
+  "family_in_garage": {
+    "id": "family_in_garage",
+    "label": "FAMILY",
+    "art": "garage",
+    "text": "The family tumbles inside: two parents, one teenager, one grandmother with a garden trowel. They know a church basement where survivors are gathering, if you can get them there.",
+    "choices": [
+      { "text": "Escort them to the church", "next": "community_thread", "effects": { "stats": { "stamina": -8, "morale": 8 }, "reputation": 10 } },
+      { "text": "Ask for payment before helping", "next": "city_streets", "effects": { "stats": { "supplies": 8, "morale": -4 }, "reputation": -5 } },
+      { "text": "Send them with directions and stay", "next": "temporary_shelter", "effects": { "stats": { "morale": 2 }, "reputation": 3 } }
+    ]
+  },
+  "temporary_shelter": {
+    "id": "temporary_shelter",
+    "label": "SHELTER",
+    "art": "shelter",
+    "text": "For one night, walls hold. People sleep in shifts. Someone makes a joke and everyone laughs too hard because laughter is also a ration.",
+    "choices": [
+      { "text": "Take first watch", "next": "city_streets", "effects": { "stats": { "stamina": -5, "morale": 5 }, "reputation": 5 } },
+      { "text": "Patch wounds and share food", "next": "community_thread", "effects": { "stats": { "health": 8, "supplies": -5, "morale": 8 }, "reputation": 7 } },
+      { "text": "Rest while others guard", "next": "city_streets", "effects": { "stats": { "stamina": 16, "hunger": -4 }, "reputation": -2 } }
+    ]
+  },
+  "freezer_mercy": {
+    "id": "freezer_mercy",
+    "label": "FREEZER",
+    "art": "restaurant",
+    "text": "The person in the freezer is shaking, pale, and unbitten. They were locked in by coworkers who panicked. They offer you the restaurant's emergency cash box, then laugh when they remember cash is just paper.",
+    "choices": [
+      { "text": "Bring them with you", "next": "community_thread", "effects": { "stats": { "morale": 6, "supplies": -3 }, "reputation": 8, "inventory": ["cook ally"] } },
+      { "text": "Take food and tell them where to go", "next": "city_streets", "effects": { "stats": { "supplies": 8 }, "reputation": 3 } },
+      { "text": "Use the freezer as a barricade", "next": "temporary_shelter", "effects": { "stats": { "stamina": -5 }, "skills": { "crafting": 2 } } }
+    ]
+  },
+  "bridge_saved": {
+    "id": "bridge_saved",
+    "label": "STANDING",
+    "art": "bridge",
+    "text": "The bridge holds. People cross in stunned silence, touching the rails like a blessing. A radio operator among them says Haven Base needs people who can keep broken things working.",
+    "choices": [
+      { "text": "Answer the call to Haven Base", "next": "radio_hint", "effects": { "stats": { "morale": 8 }, "reputation": 8 } },
+      { "text": "Stay and manage the crossing", "next": "community_thread", "effects": { "stats": { "stamina": -8, "morale": 10 }, "reputation": 12 } },
+      { "text": "Leave before gratitude becomes requests", "next": "city_streets", "effects": { "stats": { "stamina": -3 }, "reputation": -2 } }
+    ]
+  },
+  "radio_hint": {
+    "id": "radio_hint",
+    "label": "STATIC",
+    "art": "radio",
+    "text": "A broadcast fights through the static: Haven Base, old stadium, food, walls, doctors. Another voice breaks over it, laughing softly, repeating the same coordinates. Hope and bait use the same frequency.",
+    "choices": [
+      { "text": "Head for Haven Base", "next": "haven_approach", "effects": { "stats": { "stamina": -10, "morale": 8 }, "flag": "following_haven_signal" } },
+      { "text": "Circle the stadium and watch first", "next": "stadium_watch", "effects": { "stats": { "stamina": -8 }, "skills": { "wisdom": 2 } } },
+      { "text": "Ignore the broadcast and stay mobile", "next": "city_streets", "effects": { "stats": { "morale": -3 }, "skills": { "scavenging": 2 } } }
+    ]
+  },
+  "community_thread": {
+    "id": "community_thread",
+    "label": "THREADS",
+    "art": "shelter",
+    "text": "People begin to remember your name. That can save you. That can bury you under favors. A small group asks you to help turn an old mill by the river into a settlement.",
+    "choices": [
+      { "text": "Commit to building the mill settlement", "next": "old_mill", "effects": { "stats": { "morale": 8, "supplies": -6 }, "reputation": 10, "flag": "mill_bound" } },
+      { "text": "Keep helping, but stay independent", "next": "city_streets", "effects": { "stats": { "morale": 3 }, "reputation": 4 } },
+      { "text": "Trade your reputation for supplies", "next": "city_streets", "effects": { "stats": { "supplies": 12, "morale": -5 }, "reputation": -8 } }
+    ]
+  },
+  "city_streets": {
+    "id": "city_streets",
+    "label": "STREETS",
+    "art": "street",
+    "text": "The city has become a machine that runs on fear. Sirens die. Windows stare. Every block asks the same question in a different accent: what are you willing to become by sunset?",
+    "choices": [
+      { "text": "Scavenge the pharmacy district", "next": "pharmacy_district", "effects": { "stats": { "stamina": -8, "hunger": -5 }, "skills": { "scavenging": 2 } } },
+      { "text": "Follow signs toward Haven Base", "next": "haven_approach", "effects": { "stats": { "stamina": -10, "morale": 5 } } },
+      { "text": "Look for a defensible shelter", "next": "temporary_shelter", "effects": { "stats": { "stamina": -5 }, "skills": { "wisdom": 2 } } },
+      { "text": "Search for other survivors", "next": "community_thread", "effects": { "stats": { "morale": 3, "hunger": -4 }, "reputation": 2 } }
+    ]
+  },
+  "pharmacy_district": {
+    "id": "pharmacy_district",
+    "label": "PHARMACY ROW",
+    "art": "market",
+    "text": "Three pharmacies sit across from each other like rival churches. One is burned. One is locked. One has a line of sick people outside and a teenager with a crowbar deciding who deserves medicine.",
+    "choices": [
+      { "text": "Help organize a fair ration line", "next": "community_thread", "effects": { "stats": { "supplies": 4, "morale": 8 }, "reputation": 10 } },
+      { "text": "Break into the locked pharmacy", "next": "city_streets", "effects": { "stats": { "supplies": 14, "health": -4 }, "skills": { "scavenging": 2 }, "reputation": -5 } },
+      { "text": "Trade labor for medicine", "next": "temporary_shelter", "effects": { "stats": { "health": 8, "stamina": -10 }, "reputation": 5 } }
+    ]
+  },
+  "haven_approach": {
+    "id": "haven_approach",
+    "label": "HAVEN",
+    "art": "stadium",
+    "text": "The old stadium rises over the road, ringed with buses and sheet metal. A hand-painted sign reads HAVEN BASE. Another sign, smaller and fresher, reads NO WEAPONS WITHOUT WORK.",
+    "choices": [
+      { "text": "Enter openly and offer your skills", "next": "haven_judgement", "effects": { "stats": { "morale": 8 }, "reputation": 5 } },
+      { "text": "Hide your best gear before entering", "next": "haven_judgement", "effects": { "stats": { "morale": -2 }, "skills": { "wisdom": 2 }, "reputation": -2 } },
+      { "text": "Avoid the gates and watch from outside", "next": "stadium_watch", "effects": { "stats": { "stamina": -5 }, "skills": { "wisdom": 2 } } }
+    ]
+  },
+  "stadium_watch": {
+    "id": "stadium_watch",
+    "label": "WATCHING",
+    "art": "stadium",
+    "text": "From the concession roof, you watch Haven Base for a day. They feed people. They also exile people. At dusk, raiders test the west fence and everyone inside looks very young.",
+    "choices": [
+      { "text": "Warn Haven about the raiders", "next": "haven_judgement", "effects": { "stats": { "morale": 5 }, "reputation": 10, "flag": "warned_haven" } },
+      { "text": "Use the attack as cover to slip inside", "next": "haven_judgement", "effects": { "stats": { "supplies": 5, "morale": -5 }, "reputation": -6 } },
+      { "text": "Leave Haven to its own problems", "next": "city_streets", "effects": { "stats": { "morale": -4 }, "reputation": -4 } }
+    ]
+  },
+  "old_mill": {
+    "id": "old_mill",
+    "label": "OLD MILL",
+    "art": "shelter",
+    "text": "The mill has water, a stone foundation, and people willing to argue about chore charts. It is absurd. It is fragile. It is the closest thing to a future you have seen.",
+    "choices": [
+      { "text": "Build the settlement and defend its rules", "next": "ending_community", "effects": { "stats": { "morale": 12 }, "reputation": 15 } },
+      { "text": "Turn it into a trading post", "next": "ending_trader", "effects": { "stats": { "supplies": 15 }, "reputation": 8 } },
+      { "text": "Leave before they make you responsible", "next": "ending_wanderer", "effects": { "stats": { "morale": -4 }, "reputation": -3 } }
+    ]
+  },
+  "haven_judgement": {
+    "id": "haven_judgement",
+    "label": "JUDGEMENT",
+    "art": "stadium",
+    "text": "Haven Base puts your name on a clipboard and your past in the air between you. People you helped speak up. People you hurt speak louder. The gate captain asks one question: what will you do when the food runs low?",
+    "choices": [
+      { "text": "Share risk and ration by need", "next": "ending_haven", "effects": { "stats": { "morale": 10 }, "reputation": 10 } },
+      { "text": "Protect your own people first", "next": "ending_hardline", "effects": { "stats": { "supplies": 8, "morale": -4 }, "reputation": -6 } },
+      { "text": "Reject their judgement and keep walking", "next": "ending_wanderer", "effects": { "stats": { "morale": -3 }, "reputation": -2 } }
+    ]
+  },
+  "last_door": {
+    "id": "last_door",
+    "label": "LAST DOOR",
+    "art": "school",
+    "text": "The door bucks against your shoulder. People escape behind you. Your arms shake. You do not know their names. They will know yours.",
+    "choices": [
+      { "text": "Let go at the last second and run", "next": "city_streets", "effects": { "stats": { "health": -10, "stamina": -8 }, "reputation": 6 } },
+      { "text": "Hold until everyone is clear", "next": "ending_sacrifice", "effects": { "stats": { "health": -80 }, "reputation": 18 } }
+    ]
+  },
+  "underpass_return": {
+    "id": "underpass_return",
+    "label": "RETURN",
+    "art": "overpass",
+    "text": "The owners return: three teenagers and a woman with a crowbar. They expected thieves. They find you waiting. It takes them a long time to lower the crowbar.",
+    "choices": [
+      { "text": "Join them for the night", "next": "temporary_shelter", "effects": { "stats": { "morale": 6, "hunger": 4 }, "reputation": 7 } },
+      { "text": "Trade information and move on", "next": "radio_hint", "effects": { "stats": { "supplies": 4 }, "reputation": 4 } },
+      { "text": "Ask them to travel with you", "next": "community_thread", "effects": { "stats": { "morale": 8 }, "reputation": 8 } }
+    ]
+  },
+  "ending_community": {
+    "id": "ending_community",
+    "label": "ENDING",
+    "art": "shelter",
+    "text": "Months later, the mill wheel turns again. Children carry water. Watchfires mark the road. The dead still walk outside the walls, but inside, people argue about tomorrow because they believe tomorrow exists.",
+    "ending": "Community Builder"
+  },
+  "ending_trader": {
+    "id": "ending_trader",
+    "label": "ENDING",
+    "art": "market",
+    "text": "Your trading post becomes a rumor that saves lives. Medicine for fuel. Batteries for maps. Mercy for mercy, when people can afford it. You survive by making need speak clearly.",
+    "ending": "The Broker"
+  },
+  "ending_haven": {
+    "id": "ending_haven",
+    "label": "ENDING",
+    "art": "stadium",
+    "text": "Haven Base lets you through. Not because you are clean. No one is. Because enough people decide you are useful, and enough decide you are worth trusting. It is not salvation, but it has walls.",
+    "ending": "Inside Haven"
+  },
+  "ending_hardline": {
+    "id": "ending_hardline",
+    "label": "ENDING",
+    "art": "checkpoint",
+    "text": "You earn a place among the hardliners. Food goes to workers. Weapons go to loyal hands. People live. Some even thank you. At night, you remember the ones outside the math.",
+    "ending": "Hard Choices"
+  },
+  "ending_wanderer": {
+    "id": "ending_wanderer",
+    "label": "ENDING",
+    "art": "street",
+    "text": "You keep moving. The city thins into roads, roads into fields, fields into rumors. Every sunrise feels stolen. Every night, you write one more line in the notebook: still here.",
+    "ending": "Still Here"
+  },
+  "ending_sacrifice": {
+    "id": "ending_sacrifice",
+    "label": "ENDING",
+    "art": "school",
+    "text": "They get out because you do not. Later, someone paints your name beside the library window. The letters run in the rain, but the story stays.",
+    "ending": "The Door Held"
+  }
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "id": "rain_sickness",
+    "label": "WEATHER",
+    "art": "street",
+    "text": "Cold rain turns the city into a charcoal smear. Your clothes cling. Your fingers go numb. Somewhere nearby, infected shuffle through puddles with patient feet.",
+    "effects": { "stats": { "stamina": -8, "morale": -3 } }
+  },
+  {
+    "id": "overturned_truck",
+    "label": "SCAVENGE",
+    "art": "roadblock",
+    "text": "An overturned delivery truck blocks an alley. Most crates are smashed, but one still holds powdered soup and batteries. The alley is narrow enough to become a trap.",
+    "effects": { "stats": { "supplies": 10, "hunger": 5, "stamina": -4 }, "skills": { "scavenging": 1 } }
+  },
+  {
+    "id": "distant_explosion",
+    "label": "NOISE",
+    "art": "industrial",
+    "text": "A distant explosion rolls over the rooftops. Birds scatter. Infected turn toward the sound, then toward every other sound, including your breathing.",
+    "effects": { "stats": { "morale": -5 }, "flag": "infected_agitated" }
+  },
+  {
+    "id": "lost_child",
+    "label": "ENCOUNTER",
+    "art": "suburb",
+    "text": "A child steps from behind a mailbox with a kitchen knife held backward. They ask if you know where the evacuation buses went. Their voice is too calm.",
+    "effects": { "stats": { "morale": -2 }, "reputation": 4 }
+  },
+  {
+    "id": "bad_can",
+    "label": "HUNGER",
+    "art": "market",
+    "text": "The can looked sealed. It was not. You lose an hour behind a pharmacy counter, sweating through cramps and promising the universe you will read labels now.",
+    "effects": { "stats": { "health": -6, "hunger": -4, "stamina": -6 } }
+  }
+]

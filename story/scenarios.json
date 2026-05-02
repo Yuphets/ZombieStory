@@ -1,0 +1,288 @@
+{
+  "military": [
+    {
+      "id": "deployment_checkpoint",
+      "title": "Active Deployment",
+      "scene": "checkpoint_arrival",
+      "location": "a burned military checkpoint",
+      "inventory": ["sidearm with one magazine", "field rations"],
+      "stats": { "supplies": 12, "stamina": -5, "combat": 4 }
+    },
+    {
+      "id": "family_leave",
+      "title": "Leave Gone Wrong",
+      "scene": "suburb_arrival",
+      "location": "your family's street",
+      "inventory": ["car keys", "family photo"],
+      "stats": { "morale": -8, "supplies": 8 }
+    },
+    {
+      "id": "discharged_vagrant",
+      "title": "No One To Report To",
+      "scene": "overpass_arrival",
+      "location": "an underpass shelter",
+      "inventory": ["bedroll", "old medals"],
+      "stats": { "reputation": -4, "supplies": 5, "wisdom": 4 }
+    }
+  ],
+  "high-school-student": [
+    {
+      "id": "school_drill",
+      "title": "The Drill Became Real",
+      "scene": "school_lockdown",
+      "location": "a locked classroom wing",
+      "inventory": ["school backpack", "energy drink"],
+      "stats": { "agility": 4, "supplies": 6 }
+    },
+    {
+      "id": "home_alone",
+      "title": "Empty House",
+      "scene": "suburb_arrival",
+      "location": "your silent home",
+      "inventory": ["house keys", "parents' note"],
+      "stats": { "morale": -6, "supplies": 8 }
+    },
+    {
+      "id": "mall_weekend",
+      "title": "Weekend At The Mall",
+      "scene": "mall_arrival",
+      "location": "the sporting goods store",
+      "inventory": ["mall map", "soda bottle"],
+      "stats": { "supplies": 10, "scavenging": 4 }
+    }
+  ],
+  "nurse": [
+    {
+      "id": "hospital_shift",
+      "title": "Double Shift",
+      "scene": "hospital_shift",
+      "location": "triage hall three",
+      "inventory": ["triage kit", "blood-stained badge"],
+      "stats": { "medical": 5, "morale": -4, "supplies": 8 }
+    },
+    {
+      "id": "ambulance_break",
+      "title": "Ambulance Bay",
+      "scene": "ambulance_bay",
+      "location": "the ambulance bay",
+      "inventory": ["saline bag", "paramedic radio"],
+      "stats": { "medical": 4, "vehicleUse": 4 }
+    },
+    {
+      "id": "day_off",
+      "title": "Day Off",
+      "scene": "suburb_arrival",
+      "location": "a grocery store parking lot",
+      "inventory": ["scrubs", "pharmacy receipt"],
+      "stats": { "supplies": 10, "morale": 4 }
+    }
+  ],
+  "doctor": [
+    {
+      "id": "hospital_shift",
+      "title": "Operating Room",
+      "scene": "hospital_shift",
+      "location": "a dark operating ward",
+      "inventory": ["medical bag", "sterile gloves"],
+      "stats": { "medical": 7, "morale": -6 }
+    },
+    {
+      "id": "clinic_lockin",
+      "title": "Clinic Lock-In",
+      "scene": "clinic_lockin",
+      "location": "your neighborhood clinic",
+      "inventory": ["clinic keys", "antibiotics"],
+      "stats": { "medical": 6, "supplies": 8 }
+    },
+    {
+      "id": "house_call",
+      "title": "House Call",
+      "scene": "suburb_arrival",
+      "location": "a patient's driveway",
+      "inventory": ["doctor's coat", "sedatives"],
+      "stats": { "wisdom": 4, "supplies": 6 }
+    }
+  ],
+  "police-officer": [
+    {
+      "id": "station_riot",
+      "title": "Station Riot",
+      "scene": "station_riot",
+      "location": "the back of the police station",
+      "inventory": ["baton", "radio"],
+      "stats": { "combat": 4, "reputation": -3 }
+    },
+    {
+      "id": "traffic_stop",
+      "title": "Last Traffic Stop",
+      "scene": "roadblock_arrival",
+      "location": "a wrecked roadblock",
+      "inventory": ["flares", "handcuffs"],
+      "stats": { "supplies": 7, "intimidation": 4 }
+    },
+    {
+      "id": "family_call",
+      "title": "Call From Home",
+      "scene": "suburb_arrival",
+      "location": "your apartment block",
+      "inventory": ["apartment keys", "service radio"],
+      "stats": { "morale": -5, "supplies": 6 }
+    }
+  ],
+  "mechanic": [
+    {
+      "id": "garage_last_shift",
+      "title": "Last Shift",
+      "scene": "garage_start",
+      "location": "your repair bay",
+      "inventory": ["socket wrench", "fuel can"],
+      "stats": { "crafting": 6, "vehicleUse": 8 }
+    },
+    {
+      "id": "tow_yard",
+      "title": "Tow Yard",
+      "scene": "tow_yard",
+      "location": "a fenced tow yard",
+      "inventory": ["tow keys", "jumper cables"],
+      "stats": { "supplies": 8, "vehicleUse": 6 }
+    },
+    {
+      "id": "bus_depot",
+      "title": "Bus Depot",
+      "scene": "bus_depot",
+      "location": "the city bus depot",
+      "inventory": ["diesel siphon", "grease rag"],
+      "stats": { "supplies": 8, "crafting": 4 }
+    }
+  ],
+  "teacher": [
+    {
+      "id": "classroom_holdout",
+      "title": "Classroom Holdout",
+      "scene": "school_lockdown",
+      "location": "room 214",
+      "inventory": ["class roster", "first aid poster"],
+      "stats": { "morale": 5, "reputation": 5 }
+    },
+    {
+      "id": "field_trip",
+      "title": "Field Trip",
+      "scene": "museum_start",
+      "location": "the civic museum",
+      "inventory": ["field trip bag", "walkie-talkie"],
+      "stats": { "wisdom": 4, "supplies": 6 }
+    },
+    {
+      "id": "empty_school",
+      "title": "After Hours",
+      "scene": "school_empty",
+      "location": "the empty school office",
+      "inventory": ["master keys", "grade book"],
+      "stats": { "scavenging": 4, "supplies": 8 }
+    }
+  ],
+  "athlete": [
+    {
+      "id": "stadium_practice",
+      "title": "Stadium Practice",
+      "scene": "stadium_practice",
+      "location": "the practice field",
+      "inventory": ["duffel bag", "cleats"],
+      "stats": { "stamina": 5, "hunger": -4 }
+    },
+    {
+      "id": "gym_locker",
+      "title": "Locker Room",
+      "scene": "gym_start",
+      "location": "a locked gym",
+      "inventory": ["protein bars", "batting helmet"],
+      "stats": { "supplies": 8, "combat": 2 }
+    },
+    {
+      "id": "marathon_route",
+      "title": "Marathon Route",
+      "scene": "roadblock_arrival",
+      "location": "a city marathon route",
+      "inventory": ["race bib", "water pouch"],
+      "stats": { "agility": 5, "stamina": 5 }
+    }
+  ],
+  "unemployed": [
+    {
+      "id": "eviction_day",
+      "title": "Eviction Day",
+      "scene": "overpass_arrival",
+      "location": "a rain-slick underpass",
+      "inventory": ["duffel bag", "cheap lighter"],
+      "stats": { "morale": -5, "scavenging": 5 }
+    },
+    {
+      "id": "job_center",
+      "title": "Waiting Room",
+      "scene": "job_center",
+      "location": "the job center",
+      "inventory": ["resume folder", "vending machine snacks"],
+      "stats": { "supplies": 8, "reputation": 2 }
+    },
+    {
+      "id": "apartment_roof",
+      "title": "Rooftop Smoke",
+      "scene": "suburb_arrival",
+      "location": "your apartment roof",
+      "inventory": ["roof key", "half pack of cigarettes"],
+      "stats": { "wisdom": 4, "morale": -2 }
+    }
+  ],
+  "chef": [
+    {
+      "id": "restaurant_close",
+      "title": "Closing Shift",
+      "scene": "restaurant_start",
+      "location": "your restaurant kitchen",
+      "inventory": ["chef knife", "canned tomatoes"],
+      "stats": { "supplies": 12, "combat": 2 }
+    },
+    {
+      "id": "food_truck",
+      "title": "Food Truck",
+      "scene": "food_truck",
+      "location": "a dead food truck",
+      "inventory": ["propane tank", "spice roll"],
+      "stats": { "supplies": 10, "crafting": 3 }
+    },
+    {
+      "id": "market_delivery",
+      "title": "Market Delivery",
+      "scene": "market_start",
+      "location": "the produce market",
+      "inventory": ["delivery list", "cleaver"],
+      "stats": { "scavenging": 5, "supplies": 8 }
+    }
+  ],
+  "engineer": [
+    {
+      "id": "server_room",
+      "title": "Server Room",
+      "scene": "server_room",
+      "location": "a humming server room",
+      "inventory": ["multitool", "battery pack"],
+      "stats": { "crafting": 6, "supplies": 6 }
+    },
+    {
+      "id": "bridge_inspection",
+      "title": "Bridge Inspection",
+      "scene": "bridge_start",
+      "location": "the north bridge",
+      "inventory": ["survey map", "laser measure"],
+      "stats": { "wisdom": 5, "stamina": -4 }
+    },
+    {
+      "id": "power_plant",
+      "title": "Grid Failure",
+      "scene": "power_plant",
+      "location": "the power plant gate",
+      "inventory": ["hard hat", "wire spool"],
+      "stats": { "crafting": 5, "reputation": 2 }
+    }
+  ]
+}

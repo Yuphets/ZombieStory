@@ -1,0 +1,135 @@
+{
+  "accounts": [
+    {
+      "id": "4c8239b7-778b-4e57-a5c9-64ea8fa033f4",
+      "username": "Gerard",
+      "createdAt": "2026-05-02T18:01:03.425Z",
+      "updatedAt": "2026-05-02T18:01:32.195Z"
+    }
+  ],
+  "progress": {
+    "4c8239b7-778b-4e57-a5c9-64ea8fa033f4": {
+      "accountId": "4c8239b7-778b-4e57-a5c9-64ea8fa033f4",
+      "state": {
+        "avatar": {
+          "id": "68cba856-47b3-488a-9f64-dd6433aa21c0",
+          "name": "Gerard",
+          "genderId": "male",
+          "gender": "Male",
+          "ageBandId": "teen",
+          "ageBand": "Teen 13-17",
+          "professionId": "police-officer",
+          "profession": "Police Officer",
+          "summary": "A badge still opens doors, though not always the right ones.",
+          "createdAt": "2026-05-02T18:01:32.181Z"
+        },
+        "scenario": {
+          "id": "family_call",
+          "title": "Call From Home",
+          "scene": "suburb_arrival",
+          "location": "your apartment block",
+          "inventory": [
+            "apartment keys",
+            "service radio"
+          ],
+          "stats": {
+            "morale": -5,
+            "supplies": 6
+          }
+        },
+        "currentSceneId": "suburb_arrival",
+        "turn": 0,
+        "flags": {},
+        "inventory": [
+          "flashlight",
+          "zip ties",
+          "service radio",
+          "apartment keys"
+        ],
+        "relationships": {},
+        "coop": {
+          "active": false,
+          "partner": null,
+          "actingPlayer": "player"
+        },
+        "gameOver": false,
+        "history": [],
+        "stats": {
+          "health": 100,
+          "stamina": 108,
+          "morale": 69,
+          "hunger": 82,
+          "supplies": 34,
+          "reputation": 48
+        },
+        "skills": {
+          "combat": 48,
+          "agility": 48,
+          "medical": 26,
+          "crafting": 22,
+          "scavenging": 30,
+          "intimidation": 44,
+          "vehicleUse": 16,
+          "wisdom": 15
+        }
+      },
+      "savedAt": "2026-05-02T18:01:32.195Z"
+    }
+  },
+  "avatars": [
+    {
+      "id": "seed-mara",
+      "name": "Mara Voss",
+      "gender": "Female",
+      "genderId": "female",
+      "ageBand": "Adult 26-45",
+      "ageBandId": "adult",
+      "profession": "Mechanic",
+      "professionId": "mechanic",
+      "reputation": 68,
+      "location": "tow yard",
+      "status": "alive"
+    },
+    {
+      "id": "seed-len",
+      "name": "Len Park",
+      "gender": "Non-binary",
+      "genderId": "non-binary",
+      "ageBand": "Teen 13-17",
+      "ageBandId": "teen",
+      "profession": "High School Student",
+      "professionId": "high-school-student",
+      "reputation": 42,
+      "location": "school roof",
+      "status": "alive"
+    },
+    {
+      "id": "seed-owen",
+      "name": "Owen Rusk",
+      "gender": "Male",
+      "genderId": "male",
+      "ageBand": "Older Adult 46+",
+      "ageBandId": "older-adult",
+      "profession": "Teacher",
+      "professionId": "teacher",
+      "reputation": 81,
+      "location": "old mill",
+      "status": "alive"
+    },
+    {
+      "id": "68cba856-47b3-488a-9f64-dd6433aa21c0",
+      "name": "Gerard",
+      "gender": "Male",
+      "genderId": "male",
+      "ageBand": "Teen 13-17",
+      "ageBandId": "teen",
+      "profession": "Police Officer",
+      "professionId": "police-officer",
+      "reputation": 48,
+      "location": "your apartment block",
+      "status": "alive",
+      "lastSeenTurn": 0,
+      "updatedAt": "2026-05-02T18:01:32.190Z"
+    }
+  ]
+}
