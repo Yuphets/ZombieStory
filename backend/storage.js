@@ -12,6 +12,12 @@ try {
 const ROOT = path.join(__dirname, "..");
 const DATA_DIR = path.join(ROOT, "data");
 const DB_FILE = path.join(DATA_DIR, "db.json");
+const DATABASE_ENV_KEYS = [
+  "DATABASE_URL",
+  "POSTGRES_URL",
+  "POSTGRES_URL_NON_POOLING",
+  "POSTGRES_PRISMA_URL"
+];
 
 const seedAvatars = [
   {
@@ -56,8 +62,9 @@ const seedAvatars = [
 ];
 
 function createStorage() {
-  if (process.env.DATABASE_URL && neonFactory) {
-    return new NeonStorage(process.env.DATABASE_URL);
+  const connection = resolveDatabaseConnection();
+  if (connection.url && neonFactory) {
+    return new NeonStorage(connection);
   }
   return new JsonStorage();
 }
@@ -116,6 +123,15 @@ class JsonStorage {
     delete db.progress[accountId];
     this.writeDb(db);
     return { ok: true };
+  }
+
+  async getDatabaseStatus() {
+    return {
+      connected: false,
+      provider: "local-json",
+      mode: "fallback",
+      envKey: null
+    };
   }
 
   async getArtStatus() {
@@ -209,8 +225,9 @@ class JsonStorage {
 }
 
 class NeonStorage {
-  constructor(databaseUrl) {
-    this.sql = neonFactory(databaseUrl);
+  constructor(connection) {
+    this.connection = connection;
+    this.sql = neonFactory(connection.url);
     this.ready = false;
   }
 
@@ -333,6 +350,17 @@ class NeonStorage {
     return { ok: true };
   }
 
+  async getDatabaseStatus() {
+    await this.ensureSchema();
+    await this.sql`SELECT 1`;
+    return {
+      connected: true,
+      provider: "neon",
+      mode: "serverless-postgres",
+      envKey: this.connection.envKey
+    };
+  }
+
   async getArtStatus() {
     await this.ensureSchema();
     const key = await this.getArtKey();
@@ -430,6 +458,16 @@ function mapProgress(row) {
     state: row.state,
     savedAt: row.saved_at
   };
+}
+
+function resolveDatabaseConnection() {
+  for (const envKey of DATABASE_ENV_KEYS) {
+    const value = String(process.env[envKey] || "").trim();
+    if (value) {
+      return { url: value, envKey };
+    }
+  }
+  return { url: "", envKey: null };
 }
 
 module.exports = {

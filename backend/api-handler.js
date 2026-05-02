@@ -19,6 +19,10 @@ async function handleApiRequest(req, res) {
     return sendJson(res, 200, { avatars: await storage.listAvatars() });
   }
 
+  if (req.method === "GET" && url.pathname === "/api/db-status") {
+    return sendJson(res, 200, await storage.getDatabaseStatus());
+  }
+
   if (req.method === "PUT" && url.pathname === "/api/avatars") {
     const avatar = await readBody(req);
     if (!avatar.id) {
