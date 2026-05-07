@@ -1,11 +1,11 @@
 :root {
-  --paper: #e6e4de;
-  --paper-light: #f7f7f3;
-  --paper-dark: #ceccc5;
-  --ink: #171717;
-  --ink-soft: #55514a;
-  --charcoal: #2b2b2b;
-  --ash: #8a8479;
+  --paper: #e1ded7;
+  --paper-light: #f4f3ee;
+  --paper-dark: #cbc7bf;
+  --ink: #111111;
+  --ink-soft: #4a4741;
+  --charcoal: #202020;
+  --ash: #7f796f;
   --line: #202020;
   --wash: rgba(20, 20, 20, 0.08);
   --wash-heavy: rgba(20, 20, 20, 0.16);
@@ -25,8 +25,8 @@ body {
   margin: 0;
   color: var(--ink);
   background:
-    radial-gradient(circle at 18% 14%, rgba(255, 255, 255, 0.18), transparent 28rem),
-    linear-gradient(115deg, #191919, #494641 48%, #111);
+    radial-gradient(circle at 18% 14%, rgba(255, 255, 255, 0.12), transparent 28rem),
+    linear-gradient(115deg, #0d0d0d, #363430 48%, #0b0b0b);
   font-family: var(--font-hand);
   display: grid;
   place-items: start center;
@@ -54,8 +54,8 @@ button {
   height: min(900px, calc(100vh - 28px));
   min-height: 680px;
   background:
-    linear-gradient(90deg, rgba(20, 20, 20, 0.17) 55px, transparent 56px),
-    repeating-linear-gradient(0deg, transparent 0 31px, rgba(20, 20, 20, 0.09) 32px),
+    linear-gradient(90deg, rgba(20, 20, 20, 0.15) 55px, transparent 56px),
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(20, 20, 20, 0.06) 32px),
     var(--paper);
   border: 3px solid var(--ink);
   box-shadow: 12px 14px 0 var(--shadow), inset 0 0 70px rgba(0, 0, 0, 0.13);
@@ -92,7 +92,7 @@ button {
   padding: 18px 24px 14px 74px;
   border-bottom: 3px solid var(--ink);
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.18), rgba(0, 0, 0, 0.05)),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.14), rgba(0, 0, 0, 0.08)),
     rgba(206, 204, 197, 0.78);
 }
 
@@ -100,7 +100,7 @@ button {
   font-family: var(--font-title);
   font-size: clamp(1.45rem, 3vw, 2.45rem);
   letter-spacing: 0;
-  transform: rotate(-0.6deg);
+  transform: rotate(-0.35deg);
   line-height: 1.08;
   padding-top: 2px;
 }
@@ -183,7 +183,7 @@ button {
 
 .panel {
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.38), rgba(0, 0, 0, 0.035)),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(0, 0, 0, 0.06)),
     rgba(247, 247, 243, 0.92);
   border: 3px solid var(--ink);
   box-shadow: 5px 5px 0 var(--shadow), inset 0 0 36px rgba(0, 0, 0, 0.045);
@@ -217,7 +217,7 @@ button {
   display: block;
   background: #f0f0ec;
   border-bottom: 3px solid rgba(20, 20, 20, 0.82);
-  filter: contrast(1.04) grayscale(1);
+  filter: contrast(1.14) grayscale(1);
 }
 
 .scene-art.is-hidden {
@@ -235,7 +235,7 @@ button {
   object-fit: cover;
   background: #e8e8e4;
   border-bottom: 3px solid rgba(20, 20, 20, 0.82);
-  filter: grayscale(1) contrast(1.02);
+  filter: grayscale(1) contrast(1.16) brightness(0.98);
 }
 
 .scene-toolbar {
@@ -263,10 +263,10 @@ button {
 .narration {
   padding: 20px 24px 22px;
   font-size: clamp(1.05rem, 1.8vw, 1.32rem);
-  line-height: 1.55;
+  line-height: 1.5;
   background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.035), transparent 18px),
-    rgba(255, 255, 255, 0.18);
+    linear-gradient(90deg, rgba(0, 0, 0, 0.05), transparent 18px),
+    rgba(255, 255, 255, 0.12);
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -298,7 +298,7 @@ button {
   align-items: start;
   padding: 14px 15px;
   text-align: left;
-  font-family: var(--font-note);
+  font-family: var(--font-hand);
   font-size: 1.05rem;
   position: relative;
   overflow: hidden;
@@ -352,7 +352,7 @@ button {
 .note-panel h3 {
   margin: 0 0 10px;
   font-family: var(--font-title);
-  font-size: 1rem;
+  font-size: 0.98rem;
   color: var(--ink);
 }
 
@@ -380,7 +380,7 @@ button {
 .shared-item {
   padding: 5px 6px;
   border: 1px solid rgba(0, 0, 0, 0.14);
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .bar {
@@ -417,7 +417,7 @@ button {
 .pill {
   padding: 4px 9px;
   border: 2px solid var(--ink);
-  background: rgba(247, 247, 243, 0.9);
+  background: rgba(247, 247, 243, 0.82);
   font-family: var(--font-note);
   box-shadow: 2px 2px 0 var(--shadow);
 }
@@ -523,8 +523,8 @@ button {
   gap: 18px;
   padding: 34px 28px 28px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.26), rgba(0, 0, 0, 0.015)),
-    radial-gradient(circle at 82% 18%, rgba(0, 0, 0, 0.07), transparent 22rem);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(0, 0, 0, 0.03)),
+    radial-gradient(circle at 82% 18%, rgba(0, 0, 0, 0.09), transparent 22rem);
 }
 
 .eyebrow {
@@ -563,7 +563,7 @@ button {
   padding: 12px;
   border: 2px solid var(--ink);
   background:
-    linear-gradient(160deg, rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.03)),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.26), rgba(0, 0, 0, 0.05)),
     rgba(247, 247, 243, 0.72);
   box-shadow: 3px 3px 0 var(--shadow);
   font-family: var(--font-note);
@@ -575,7 +575,7 @@ button {
   max-width: 26rem;
   padding: 16px 18px;
   border-left: 3px solid var(--ink);
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.14);
   font-size: 1.05rem;
   line-height: 1.55;
 }
@@ -684,7 +684,7 @@ button {
 
 .coop-seat.active {
   border-style: solid;
-  background: rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.12);
 }
 
 .ending {

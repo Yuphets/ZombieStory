@@ -17,6 +17,7 @@ export class SketchRenderer {
 
     this.paper(ctx, w, h, rng);
     this.atmosphere(ctx, w, h, rng);
+    this.sagittarianBackdrop(ctx, w, h, rng, scene);
     this.establishPerspective(ctx, w, h, rng);
 
     const drawers = {
@@ -43,6 +44,7 @@ export class SketchRenderer {
     };
 
     (drawers[scene.art] || drawers.street)();
+    this.silhouettePass(ctx, w, h, rng, scene);
     this.foregroundDebris(ctx, w, h, rng);
     this.foregroundFrame(ctx, w, h, rng);
     this.focalHighlight(ctx, w, h);
@@ -52,16 +54,16 @@ export class SketchRenderer {
 
   paper(ctx, w, h, rng) {
     const gradient = ctx.createLinearGradient(0, 0, w, h);
-    gradient.addColorStop(0, "#f4f4f0");
-    gradient.addColorStop(0.46, "#e2e1dc");
-    gradient.addColorStop(1, "#f8f8f4");
+    gradient.addColorStop(0, "#f3f3ef");
+    gradient.addColorStop(0.5, "#d8d6cf");
+    gradient.addColorStop(1, "#f0efea");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, w, h);
 
     ctx.save();
-    ctx.globalAlpha = 0.11;
-    for (let i = 0; i < 420; i += 1) {
-      const tone = 70 + Math.floor(rng() * 110);
+    ctx.globalAlpha = 0.08;
+    for (let i = 0; i < 280; i += 1) {
+      const tone = 105 + Math.floor(rng() * 70);
       ctx.fillStyle = `rgb(${tone}, ${tone}, ${tone})`;
       ctx.fillRect(rng() * w, rng() * h, 0.4 + rng() * 1.9, 0.4 + rng() * 1.9);
     }
@@ -70,16 +72,47 @@ export class SketchRenderer {
 
   atmosphere(ctx, w, h, rng) {
     const sky = ctx.createLinearGradient(0, 0, 0, h);
-    sky.addColorStop(0, "rgba(20,20,20,0.12)");
-    sky.addColorStop(0.48, "rgba(20,20,20,0.035)");
-    sky.addColorStop(1, "rgba(20,20,20,0.08)");
+    sky.addColorStop(0, "rgba(14,14,14,0.18)");
+    sky.addColorStop(0.5, "rgba(14,14,14,0.04)");
+    sky.addColorStop(1, "rgba(14,14,14,0.12)");
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, w, h);
 
     ctx.save();
-    ctx.globalAlpha = 0.11;
-    for (let i = 0; i < 18; i += 1) {
-      this.smudge(ctx, rng() * w, h * (0.12 + rng() * 0.45), w * (0.08 + rng() * 0.18), h * (0.025 + rng() * 0.06), rng);
+    ctx.globalAlpha = 0.1;
+    for (let i = 0; i < 10; i += 1) {
+      this.smudge(ctx, rng() * w, h * (0.1 + rng() * 0.4), w * (0.1 + rng() * 0.24), h * (0.03 + rng() * 0.08), rng);
+    }
+    ctx.restore();
+  }
+
+  sagittarianBackdrop(ctx, w, h, rng, scene) {
+    const moonX = w * (scene.art === "overpass" ? 0.22 : 0.74);
+    const moonY = h * (scene.art === "hospital" ? 0.16 : 0.18);
+    const glow = ctx.createRadialGradient(moonX, moonY, 0, moonX, moonY, h * 0.22);
+    glow.addColorStop(0, "rgba(255,255,255,0.18)");
+    glow.addColorStop(0.5, "rgba(255,255,255,0.06)");
+    glow.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.save();
+    ctx.globalAlpha = 0.22;
+    const horizon = h * 0.48;
+    for (let i = 0; i < 4; i += 1) {
+      const depth = i / 4;
+      const baseY = horizon - i * h * 0.035;
+      ctx.beginPath();
+      ctx.moveTo(0, h);
+      ctx.lineTo(0, baseY);
+      for (let x = 0; x <= w; x += w / 9) {
+        const peak = baseY - h * (0.04 + rng() * 0.09) * (1 - depth * 0.35);
+        ctx.lineTo(x + jitter(rng, 18), peak);
+      }
+      ctx.lineTo(w, h);
+      ctx.closePath();
+      ctx.fillStyle = `rgba(12,12,12,${0.08 + depth * 0.05})`;
+      ctx.fill();
     }
     ctx.restore();
   }
@@ -263,6 +296,32 @@ export class SketchRenderer {
     this.foregroundFigure(ctx, w * 0.27, h * 0.68, h * 0.2, rng);
   }
 
+  silhouettePass(ctx, w, h, rng, scene) {
+    ctx.save();
+    ctx.globalAlpha = 0.28;
+    this.inkPolygon(ctx, [
+      [0, h],
+      [0, h * 0.72],
+      [w * 0.12, h * 0.66],
+      [w * 0.18, h * 0.76],
+      [w * 0.27, h * 0.71],
+      [w * 0.34, h],
+    ], "rgba(10,10,10,0.2)", "#0f0f0f", rng, 1);
+    this.inkPolygon(ctx, [
+      [w * 0.82, h],
+      [w * 0.87, h * 0.68],
+      [w * 0.92, h * 0.64],
+      [w, h * 0.74],
+      [w, h]
+    ], "rgba(10,10,10,0.18)", "#0f0f0f", rng, 1);
+
+    if (scene.art === "street" || scene.art === "roadblock" || scene.art === "suburb") {
+      this.zedSilhouette(ctx, w * 0.16, h * 0.75, h * 0.14, rng);
+      this.zedSilhouette(ctx, w * 0.9, h * 0.73, h * 0.12, rng);
+    }
+    ctx.restore();
+  }
+
   cityDepth(ctx, w, h, rng, opts) {
     const vpY = h * 0.46;
     for (let i = 0; i < 5; i += 1) {
@@ -406,6 +465,18 @@ export class SketchRenderer {
       this.inkLine(ctx, x + size * 0.26, y - size * 0.47, x + size * 0.46, y - size * 0.58, 2.4, "#111", rng, 1);
     }
     this.hatchBox(ctx, x - size * 0.13, y - size * 0.72, size * 0.27, size * 0.44, rng, 7, "diagonal", 0.14);
+  }
+
+  zedSilhouette(ctx, x, y, size, rng) {
+    ctx.save();
+    ctx.globalAlpha = 0.75;
+    this.ellipseSketch(ctx, x, y - size * 0.72, size * 0.08, size * 0.1, rng, "#0d0d0d", true);
+    this.inkPolygon(ctx, [[x - size * 0.12, y - size * 0.58], [x + size * 0.1, y - size * 0.56], [x + size * 0.06, y - size * 0.18], [x - size * 0.08, y - size * 0.2]], "rgba(10,10,10,0.22)", "#0d0d0d", rng, 1.1);
+    this.inkLine(ctx, x - size * 0.06, y - size * 0.18, x - size * 0.17, y + size * 0.08, 1.5, "#0d0d0d", rng, 1.1);
+    this.inkLine(ctx, x + size * 0.05, y - size * 0.2, x + size * 0.16, y + size * 0.1, 1.5, "#0d0d0d", rng, 1.1);
+    this.inkLine(ctx, x - size * 0.08, y - size * 0.48, x - size * 0.19, y - size * 0.3, 1.4, "#0d0d0d", rng, 1.1);
+    this.inkLine(ctx, x + size * 0.09, y - size * 0.46, x + size * 0.21, y - size * 0.22, 1.4, "#0d0d0d", rng, 1.1);
+    ctx.restore();
   }
 
   distantFigures(ctx, w, h, rng, count) {
@@ -626,8 +697,8 @@ export class SketchRenderer {
     ctx.save();
     ctx.globalCompositeOperation = "destination-out";
     const glow = ctx.createRadialGradient(w * 0.52, h * 0.48, 0, w * 0.52, h * 0.48, Math.max(w, h) * 0.42);
-    glow.addColorStop(0, "rgba(255,255,255,0.16)");
-    glow.addColorStop(0.55, "rgba(255,255,255,0.06)");
+    glow.addColorStop(0, "rgba(255,255,255,0.1)");
+    glow.addColorStop(0.55, "rgba(255,255,255,0.035)");
     glow.addColorStop(1, "rgba(255,255,255,0)");
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, w, h);
@@ -760,8 +831,8 @@ export class SketchRenderer {
   vignette(ctx, w, h) {
     const gradient = ctx.createRadialGradient(w * 0.5, h * 0.48, Math.min(w, h) * 0.18, w * 0.5, h * 0.5, Math.max(w, h) * 0.65);
     gradient.addColorStop(0, "rgba(0,0,0,0)");
-    gradient.addColorStop(0.7, "rgba(0,0,0,0.04)");
-    gradient.addColorStop(1, "rgba(0,0,0,0.22)");
+    gradient.addColorStop(0.62, "rgba(0,0,0,0.08)");
+    gradient.addColorStop(1, "rgba(0,0,0,0.3)");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, w, h);
   }
