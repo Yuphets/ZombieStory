@@ -4,45 +4,45 @@ export class DatabaseClient {
   }
 
   async signIn(username, password) {
-    return this.request("/api/accounts/sign-in", {
+    return this.request("/api?action=sign-in", {
       method: "POST",
       body: { username, password }
     });
   }
 
   async signUp(username, password) {
-    return this.request("/api/accounts/sign-up", {
+    return this.request("/api?action=sign-up", {
       method: "POST",
       body: { username, password }
     });
   }
 
   async listAvatars() {
-    const result = await this.request("/api/avatars");
+    const result = await this.request("/api?action=avatars");
     return result.avatars || [];
   }
 
   async upsertAvatar(avatar) {
-    return this.request("/api/avatars", {
+    return this.request("/api?action=avatars", {
       method: "PUT",
       body: avatar
     });
   }
 
   async getProgress(accountId) {
-    const result = await this.request(`/api/progress/${encodeURIComponent(accountId)}`);
+    const result = await this.request(`/api?action=progress&accountId=${encodeURIComponent(accountId)}`);
     return result.progress;
   }
 
   async saveProgress(accountId, state) {
-    return this.request(`/api/progress/${encodeURIComponent(accountId)}`, {
+    return this.request(`/api?action=progress&accountId=${encodeURIComponent(accountId)}`, {
       method: "PUT",
       body: { state }
     });
   }
 
   async deleteProgress(accountId) {
-    return this.request(`/api/progress/${encodeURIComponent(accountId)}`, {
+    return this.request(`/api?action=progress&accountId=${encodeURIComponent(accountId)}`, {
       method: "DELETE"
     });
   }

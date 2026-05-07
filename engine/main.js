@@ -72,7 +72,7 @@ class GameController {
     });
 
     try {
-      this.art = await loadJson("/api/art-status");
+      this.art = await loadJson("/api?action=art-status");
     } catch {
       this.art = { enabled: false, provider: "fallback" };
     }
@@ -323,7 +323,7 @@ class GameController {
     }
 
     try {
-      const result = await postJson("/api/scene-art", {
+      const result = await postJson("/api?action=scene-art", {
         sceneId: scene.id,
         art: scene.art,
         label: scene.label,
@@ -350,7 +350,7 @@ class GameController {
 
   async saveArtKey(apiKey) {
     try {
-      this.art = await putJson("/api/settings/art", { apiKey });
+      this.art = await putJson("/api?action=art-settings", { apiKey });
       this.ui.toast(this.art.enabled ? "AI art enabled" : "Art key saved");
       if (!this.account) {
         this.ui.renderAccountGate({
@@ -371,7 +371,7 @@ class GameController {
 
   async clearArtKey() {
     try {
-      this.art = await deleteJson("/api/settings/art");
+      this.art = await deleteJson("/api?action=art-settings");
       this.sceneImages.clear();
       this.ui.toast("AI art disabled");
       if (!this.account) {
