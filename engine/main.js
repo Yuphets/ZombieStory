@@ -78,7 +78,8 @@ class GameController {
     }
 
     this.ui.renderAccountGate({
-      onLogin: (username) => this.login(username),
+      onSignIn: (credentials) => this.signIn(credentials),
+      onSignUp: (credentials) => this.signUp(credentials),
       databaseOnline: this.world.usingDatabase,
       artStatus: this.art,
       onSaveArtKey: (apiKey) => this.saveArtKey(apiKey),
@@ -86,30 +87,42 @@ class GameController {
     });
   }
 
-  async login(username) {
+  async signIn({ username, password }) {
     try {
-      const result = await this.db.login(username);
-      this.account = result.account;
-      this.savedProgress = result.progress;
-      this.world.avatars = result.avatars || this.world.listAvatars();
-      this.ui.toast(`Signed in as ${this.account.username}`);
-
-      if (this.savedProgress?.state) {
-        this.ui.renderResumePanel({
-          account: this.account,
-          progress: this.savedProgress,
-          onResume: () => this.resumeGame(),
-          onNew: () => this.renderCreator(),
-          onDelete: () => this.deleteSave(),
-          onLogout: () => this.logout()
-        });
-        return;
-      }
-
-      this.renderCreator();
+      await this.authenticate(() => this.db.signIn(username, password), "Signed in");
     } catch (error) {
       this.ui.toast(error.message);
     }
+  }
+
+  async signUp({ username, password }) {
+    try {
+      await this.authenticate(() => this.db.signUp(username, password), "Account created");
+    } catch (error) {
+      this.ui.toast(error.message);
+    }
+  }
+
+  async authenticate(action, successLabel) {
+    const result = await action();
+    this.account = result.account;
+    this.savedProgress = result.progress;
+    this.world.avatars = result.avatars || this.world.listAvatars();
+    this.ui.toast(`${successLabel} for ${this.account.username}`);
+
+    if (this.savedProgress?.state) {
+      this.ui.renderResumePanel({
+        account: this.account,
+        progress: this.savedProgress,
+        onResume: () => this.resumeGame(),
+        onNew: () => this.renderCreator(),
+        onDelete: () => this.deleteSave(),
+        onLogout: () => this.logout()
+      });
+      return;
+    }
+
+    this.renderCreator();
   }
 
   renderCreator() {
@@ -130,25 +143,35 @@ class GameController {
   }
 
   async startGame(input) {
-    this.state = new GameState();
-    this.state.createAvatar(input, this.catalog);
-    const scenario = this.story.pickStartingScenario(this.state.avatar.professionId);
-    this.state.applyScenario(scenario);
+    try {
+      this.state = new GameState();
+      this.state.createAvatar(input, this.catalog);
+      const scenario = this.story.pickStartingScenario(this.state.avatar.professionId);
+      this.state.applyScenario(scenario);
 
-    if (input.coop) {
-      this.state.coop.active = true;
-      this.state.coop.partner = this.world.makeCoopPartner(this.state.avatar.id);
+      if (input.coop) {
+        this.state.coop.active = true;
+        this.state.coop.partner = this.world.makeCoopPartner(this.state.avatar.id);
+      }
+
+      const saveResult = await this.persist({ softFail: true });
+      this.ui.toast(saveResult.ok
+        ? `${this.state.avatar.name}'s page opens`
+        : `${this.state.avatar.name}'s page opens, but the save lagged behind`);
+      this.renderScene();
+    } catch (error) {
+      this.ui.toast(error.message || "The story page jammed while opening.");
     }
-
-    await this.persist();
-    this.ui.toast(`${this.state.avatar.name}'s page opens`);
-    this.renderScene();
   }
 
   resumeGame() {
-    this.state = GameState.fromSnapshot(this.savedProgress.state);
-    this.ui.toast("Save restored");
-    this.renderScene();
+    try {
+      this.state = GameState.fromSnapshot(this.savedProgress.state);
+      this.ui.toast("Save restored");
+      this.renderScene();
+    } catch (error) {
+      this.ui.toast(error.message || "That save could not be restored.");
+    }
   }
 
   async deleteSave() {
@@ -166,7 +189,8 @@ class GameController {
     this.savedProgress = null;
     this.state = new GameState();
     this.ui.renderAccountGate({
-      onLogin: (username) => this.login(username),
+      onSignIn: (credentials) => this.signIn(credentials),
+      onSignUp: (credentials) => this.signUp(credentials),
       databaseOnline: this.world.usingDatabase,
       artStatus: this.art,
       onSaveArtKey: (apiKey) => this.saveArtKey(apiKey),
@@ -215,7 +239,10 @@ class GameController {
       this.state.coop.actingPlayer = this.state.coop.actingPlayer === "player" ? "partner" : "player";
     }
 
-    await this.persist();
+    const saveResult = await this.persist({ softFail: true });
+    if (!saveResult.ok) {
+      this.ui.toast("Choice recorded, but the save did not stick yet.");
+    }
 
     if (this.state.isDead()) {
       this.renderScene();
@@ -254,16 +281,24 @@ class GameController {
     return this.world.makeEncounterScene(other, this.state);
   }
 
-  async persist() {
+  async persist({ softFail = false } = {}) {
     if (!this.state.avatar) {
-      return;
+      return { ok: true };
     }
 
-    await this.world.upsertAvatar(this.state.publicAvatar());
+    try {
+      await this.world.upsertAvatar(this.state.publicAvatar());
 
-    if (this.account && this.world.usingDatabase) {
-      const saved = await this.db.saveProgress(this.account.id, this.state.snapshot());
-      this.savedProgress = saved.progress;
+      if (this.account && this.world.usingDatabase) {
+        const saved = await this.db.saveProgress(this.account.id, this.state.snapshot());
+        this.savedProgress = saved.progress;
+      }
+      return { ok: true };
+    } catch (error) {
+      if (!softFail) {
+        throw error;
+      }
+      return { ok: false, error };
     }
   }
 
@@ -319,7 +354,8 @@ class GameController {
       this.ui.toast(this.art.enabled ? "AI art enabled" : "Art key saved");
       if (!this.account) {
         this.ui.renderAccountGate({
-          onLogin: (username) => this.login(username),
+          onSignIn: (credentials) => this.signIn(credentials),
+          onSignUp: (credentials) => this.signUp(credentials),
           databaseOnline: this.world.usingDatabase,
           artStatus: this.art,
           onSaveArtKey: (value) => this.saveArtKey(value),
@@ -340,7 +376,8 @@ class GameController {
       this.ui.toast("AI art disabled");
       if (!this.account) {
         this.ui.renderAccountGate({
-          onLogin: (username) => this.login(username),
+          onSignIn: (credentials) => this.signIn(credentials),
+          onSignUp: (credentials) => this.signUp(credentials),
           databaseOnline: this.world.usingDatabase,
           artStatus: this.art,
           onSaveArtKey: (value) => this.saveArtKey(value),

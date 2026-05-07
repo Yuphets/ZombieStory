@@ -6,13 +6,24 @@ const storage = createStorage();
 async function handleApiRequest(req, res) {
   const url = new URL(req.url, `http://${req.headers.host || "127.0.0.1"}`);
 
-  if (req.method === "POST" && url.pathname === "/api/accounts") {
+  if (req.method === "POST" && url.pathname === "/api/accounts/sign-in") {
     const body = await readBody(req);
     const username = cleanUsername(body.username);
-    if (!username) {
-      return sendJson(res, 400, { error: "Username is required." });
+    const password = cleanPassword(body.password);
+    if (!username || !password) {
+      return sendJson(res, 400, { error: "Notebook name and password are required." });
     }
-    return sendJson(res, 200, await storage.login(username));
+    return sendJson(res, 200, await storage.signIn(username, password));
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/accounts/sign-up") {
+    const body = await readBody(req);
+    const username = cleanUsername(body.username);
+    const password = cleanPassword(body.password);
+    if (!username || !password) {
+      return sendJson(res, 400, { error: "Notebook name and password are required." });
+    }
+    return sendJson(res, 200, await storage.signUp(username, password));
   }
 
   if (req.method === "GET" && url.pathname === "/api/avatars") {
@@ -161,6 +172,10 @@ function cleanUsername(username) {
 
 function cleanApiKey(apiKey) {
   return String(apiKey || "").trim().slice(0, 200);
+}
+
+function cleanPassword(password) {
+  return String(password || "").trim().slice(0, 72);
 }
 
 function readBody(req) {

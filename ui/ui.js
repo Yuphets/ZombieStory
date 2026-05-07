@@ -7,7 +7,7 @@ export class UI {
     this.renderer = renderer;
   }
 
-  renderAccountGate({ onLogin, databaseOnline, artStatus, onSaveArtKey, onClearArtKey }) {
+  renderAccountGate({ onSignIn, onSignUp, databaseOnline, artStatus, onSaveArtKey, onClearArtKey }) {
     this.root.innerHTML = shell(`
       <div class="page account-page">
         <section class="panel account-hero">
@@ -28,16 +28,28 @@ export class UI {
         </section>
         <section class="panel account-card">
           <span class="panel-label">ACCOUNT</span>
-          <form id="account-form" class="account-form">
+          <div class="auth-switch" role="tablist" aria-label="Account access">
+            <button class="plain-button compact active" type="button" data-auth-mode="sign-in">Sign In</button>
+            <button class="plain-button compact" type="button" data-auth-mode="sign-up">Sign Up</button>
+          </div>
+          <form id="account-form" class="account-form" data-mode="sign-in">
             <div class="account-status-row">
               <span class="status-chip">${databaseOnline ? "Shared DB online" : "Offline fallback"}</span>
               <span class="status-chip">${artStatus?.enabled ? "AI art ready" : "Sketch fallback"}</span>
             </div>
-            <h2>Sign In</h2>
-            <p>Enter a player name to create or reopen your account.</p>
+            <h2 id="auth-title">Sign In</h2>
+            <p id="auth-copy">Enter your notebook name and password to continue the story.</p>
             <div class="field">
               <label for="username">Player Name</label>
-              <input id="username" name="username" maxlength="32" autocomplete="off" placeholder="Example: Alex">
+              <input id="username" name="username" maxlength="32" autocomplete="username" placeholder="Example: Alex">
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <input id="password" name="password" type="password" minlength="6" maxlength="72" autocomplete="current-password" placeholder="At least 6 characters">
+            </div>
+            <div class="field" id="confirm-field" hidden>
+              <label for="confirm-password">Confirm Password</label>
+              <input id="confirm-password" name="confirmPassword" type="password" minlength="6" maxlength="72" autocomplete="new-password" placeholder="Repeat your password">
             </div>
             <button class="primary-button wide-button" type="submit">Enter The Story</button>
             <p class="small">${databaseOnline ? "Progress is saved to the shared database after each choice. On Vercel, this can run on Neon through the DATABASE_URL environment variable." : "The database API is unavailable, so only local fallback mode is available right now."}</p>
@@ -59,11 +71,61 @@ export class UI {
       </div>
     `, { account: null, databaseOnline });
 
-    this.root.querySelector("#account-form").addEventListener("submit", (event) => {
+    let mode = "sign-in";
+    const form = this.root.querySelector("#account-form");
+    const title = this.root.querySelector("#auth-title");
+    const copy = this.root.querySelector("#auth-copy");
+    const confirmField = this.root.querySelector("#confirm-field");
+    const submitButton = form.querySelector(".primary-button");
+
+    const syncMode = (nextMode) => {
+      mode = nextMode;
+      form.dataset.mode = mode;
+      title.textContent = mode === "sign-in" ? "Sign In" : "Sign Up";
+      copy.textContent = mode === "sign-in"
+        ? "Enter your notebook name and password to continue the story."
+        : "Create a notebook account so your survivor, choices, and progress can come back later.";
+      submitButton.textContent = mode === "sign-in" ? "Enter The Story" : "Create Account";
+      confirmField.hidden = mode !== "sign-up";
+      this.root.querySelectorAll("[data-auth-mode]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.authMode === mode);
+      });
+      this.root.querySelector("#password").setAttribute("autocomplete", mode === "sign-in" ? "current-password" : "new-password");
+    };
+
+    this.root.querySelectorAll("[data-auth-mode]").forEach((button) => {
+      button.addEventListener("click", () => syncMode(button.dataset.authMode));
+    });
+
+    form.addEventListener("submit", (event) => {
       event.preventDefault();
       const data = new FormData(event.currentTarget);
-      onLogin(data.get("username"));
+      const username = String(data.get("username") || "").trim();
+      const password = String(data.get("password") || "");
+      const confirmPassword = String(data.get("confirmPassword") || "");
+
+      if (!username || !password) {
+        this.toast("Notebook name and password are required.");
+        return;
+      }
+
+      if (mode === "sign-up" && password.length < 6) {
+        this.toast("Use at least 6 characters for the password.");
+        return;
+      }
+
+      if (mode === "sign-up" && password !== confirmPassword) {
+        this.toast("The passwords do not match.");
+        return;
+      }
+
+      if (mode === "sign-in") {
+        onSignIn({ username, password });
+      } else {
+        onSignUp({ username, password });
+      }
     });
+    syncMode(mode);
     this.root.querySelector("#save-art-key").addEventListener("click", () => {
       const value = this.root.querySelector("#art-api-key").value;
       onSaveArtKey(value);

@@ -500,6 +500,18 @@ button {
   min-height: 0;
 }
 
+.auth-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 26px 26px 0;
+}
+
+.auth-switch .plain-button.active {
+  background: var(--ink);
+  color: var(--paper-light);
+}
+
 .account-hero {
   min-height: 520px;
 }

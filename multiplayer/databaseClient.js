@@ -3,10 +3,17 @@ export class DatabaseClient {
     this.apiAvailable = true;
   }
 
-  async login(username) {
-    return this.request("/api/accounts", {
+  async signIn(username, password) {
+    return this.request("/api/accounts/sign-in", {
       method: "POST",
-      body: { username }
+      body: { username, password }
+    });
+  }
+
+  async signUp(username, password) {
+    return this.request("/api/accounts/sign-up", {
+      method: "POST",
+      body: { username, password }
     });
   }
 

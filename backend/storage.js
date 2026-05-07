@@ -74,20 +74,50 @@ class JsonStorage {
     this.ensureDb();
   }
 
-  async login(username) {
+  async signUp(username, password) {
     const db = this.readDb();
     let account = db.accounts.find((item) => item.username.toLowerCase() === username.toLowerCase());
-    if (!account) {
-      account = {
-        id: crypto.randomUUID(),
-        username,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-      db.accounts.push(account);
-      this.writeDb(db);
+
+    if (account?.passwordHash) {
+      throw new Error("That survivor name is already taken.");
     }
-    return { account, progress: db.progress[account.id] || null, avatars: db.avatars };
+
+    const now = new Date().toISOString();
+    const credentials = hashPassword(password);
+    account = account
+      ? {
+          ...account,
+          passwordHash: credentials.hash,
+          passwordSalt: credentials.salt,
+          updatedAt: now
+        }
+      : {
+          id: crypto.randomUUID(),
+          username,
+          passwordHash: credentials.hash,
+          passwordSalt: credentials.salt,
+          createdAt: now,
+          updatedAt: now
+        };
+
+    const index = db.accounts.findIndex((item) => item.id === account.id);
+    if (index >= 0) {
+      db.accounts[index] = account;
+    } else {
+      db.accounts.push(account);
+    }
+
+    this.writeDb(db);
+    return this.buildAuthPayload(db, account);
+  }
+
+  async signIn(username, password) {
+    const db = this.readDb();
+    const account = db.accounts.find((item) => item.username.toLowerCase() === username.toLowerCase());
+    if (!account?.passwordHash || !verifyPassword(password, account.passwordSalt, account.passwordHash)) {
+      throw new Error("The notebook name or password is incorrect.");
+    }
+    return this.buildAuthPayload(db, account);
   }
 
   async listAvatars() {
@@ -215,6 +245,14 @@ class JsonStorage {
     this.writeDb(db);
   }
 
+  buildAuthPayload(db, account) {
+    return {
+      account: sanitizeAccount(account),
+      progress: db.progress[account.id] || null,
+      avatars: db.avatars
+    };
+  }
+
   readDb() {
     return JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
   }
@@ -240,10 +278,14 @@ class NeonStorage {
       CREATE TABLE IF NOT EXISTS app_accounts (
         id uuid PRIMARY KEY,
         username text NOT NULL UNIQUE,
+        password_hash text,
+        password_salt text,
         created_at timestamptz NOT NULL DEFAULT now(),
         updated_at timestamptz NOT NULL DEFAULT now()
       );
     `;
+    await this.sql`ALTER TABLE app_accounts ADD COLUMN IF NOT EXISTS password_hash text;`;
+    await this.sql`ALTER TABLE app_accounts ADD COLUMN IF NOT EXISTS password_salt text;`;
     await this.sql`
       CREATE TABLE IF NOT EXISTS app_progress (
         account_id uuid PRIMARY KEY REFERENCES app_accounts(id) ON DELETE CASCADE,
@@ -285,24 +327,62 @@ class NeonStorage {
     this.ready = true;
   }
 
-  async login(username) {
+  async signUp(username, password) {
     await this.ensureSchema();
-    const existing = await this.sql`SELECT id, username, created_at, updated_at FROM app_accounts WHERE lower(username) = lower(${username}) LIMIT 1`;
+    const existing = await this.sql`
+      SELECT id, username, password_hash, password_salt, created_at, updated_at
+      FROM app_accounts
+      WHERE lower(username) = lower(${username})
+      LIMIT 1
+    `;
     let account = existing[0];
-    if (!account) {
+    if (account?.password_hash) {
+      throw new Error("That survivor name is already taken.");
+    }
+
+    const credentials = hashPassword(password);
+    if (account) {
+      const updated = await this.sql`
+        UPDATE app_accounts
+        SET password_hash = ${credentials.hash}, password_salt = ${credentials.salt}, updated_at = now()
+        WHERE id = ${account.id}
+        RETURNING id, username, password_hash, password_salt, created_at, updated_at
+      `;
+      account = updated[0];
+    } else {
       const id = crypto.randomUUID();
       const created = await this.sql`
-        INSERT INTO app_accounts (id, username)
-        VALUES (${id}, ${username})
-        RETURNING id, username, created_at, updated_at
+        INSERT INTO app_accounts (id, username, password_hash, password_salt)
+        VALUES (${id}, ${username}, ${credentials.hash}, ${credentials.salt})
+        RETURNING id, username, password_hash, password_salt, created_at, updated_at
       `;
       account = created[0];
     }
 
+    return this.buildAuthPayload(account);
+  }
+
+  async signIn(username, password) {
+    await this.ensureSchema();
+    const existing = await this.sql`
+      SELECT id, username, password_hash, password_salt, created_at, updated_at
+      FROM app_accounts
+      WHERE lower(username) = lower(${username})
+      LIMIT 1
+    `;
+    const account = existing[0];
+    if (!account?.password_hash || !verifyPassword(password, account.password_salt, account.password_hash)) {
+      throw new Error("The notebook name or password is incorrect.");
+    }
+
+    return this.buildAuthPayload(account);
+  }
+
+  async buildAuthPayload(account) {
     const progressRows = await this.sql`SELECT account_id, state, saved_at FROM app_progress WHERE account_id = ${account.id} LIMIT 1`;
     const avatarRows = await this.sql`SELECT payload FROM app_avatars ORDER BY updated_at DESC`;
     return {
-      account: mapAccount(account),
+      account: sanitizeAccount(mapAccount(account)),
       progress: progressRows[0] ? mapProgress(progressRows[0]) : null,
       avatars: avatarRows.map((row) => row.payload)
     };
@@ -452,6 +532,18 @@ function mapAccount(row) {
   };
 }
 
+function sanitizeAccount(account) {
+  if (!account) {
+    return null;
+  }
+  return {
+    id: account.id,
+    username: account.username,
+    createdAt: account.createdAt,
+    updatedAt: account.updatedAt
+  };
+}
+
 function mapProgress(row) {
   return {
     accountId: row.account_id,
@@ -484,6 +576,20 @@ function resolveDatabaseConnection() {
   }
 
   return { url: "", envKey: null };
+}
+
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
+  return { salt, hash };
+}
+
+function verifyPassword(password, salt, expectedHash) {
+  if (!password || !salt || !expectedHash) {
+    return false;
+  }
+  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
+  return crypto.timingSafeEqual(Buffer.from(hash, "hex"), Buffer.from(expectedHash, "hex"));
 }
 
 module.exports = {
